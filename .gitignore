@@ -9,3 +9,6 @@
 /build
 /captures
 .externalNativeBuild
+libs/
+/salamander_base_module/src/main/res/values/com_crashlytics_export_strings.xml
+/salamander_base_module/src/main/assets/crashlytics-build.properties
