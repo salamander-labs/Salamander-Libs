@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="GoCalendarView">
+        <attr name="monthTitleColor" format="color" />
+        <attr name="monthTitleFont" format="string" />
+        <attr name="dayOfWeekColor" format="color" />
+        <attr name="dayOfWeekFont" format="string" />
+        <attr name="dayOfMonthColor" format="color" />
+        <attr name="dayOfMonthFont" format="string" />
+    </declare-styleable>
+    <declare-styleable name="GoTextView">
+        <attr name="font_style" />
+    </declare-styleable>
+    <declare-styleable name="Fonts">
+        <attr name="font_style" format="enum">
+            <enum name="regular" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

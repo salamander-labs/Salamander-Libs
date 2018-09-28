@@ -1,0 +1,27 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- dateTitleLayout -->
+    <dimen name="dateTitleTextSize">22sp</dimen>
+    <dimen name="monthTitleTextSize">16sp</dimen>
+    <dimen name="yearTitleTextSize">20sp</dimen>
+    <dimen name="dateTitlePaddingBottom">5dp</dimen>
+    <!-- weekLayout -->
+    <dimen name="weekDaysPaddingBottom">10dp</dimen>
+    <dimen name="weekDaysPaddingTop">10dp</dimen>
+    <dimen name="dayOfWeekTextSize">16sp</dimen>
+    <!-- weekRowLayout -->
+    <dimen name="weekRowMinHeight">44dp</dimen>
+    <dimen name="dayOfMonthTextSize">20sp</dimen>
+    <dimen name="dayOfMonthMinWidth">50dp</dimen>
+    <dimen name="dayOfMonthMinHeight">0dp</dimen>
+    <dimen name="dayOfMonthPaddingBottom">0dp</dimen>
+    <dimen name="dayOfMonthImageSize">4dp</dimen>
+    <dimen name="dayOfMonthImageMarginTop">28dp</dimen>
+
+    <dimen name="three_grid_unit">24dp</dimen>
+    <dimen name="one_and_a_half_grid_unit">12dp</dimen>
+</resources>
