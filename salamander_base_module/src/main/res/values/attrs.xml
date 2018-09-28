@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MandatoryEditText">
+        <attr name="caption" format="string"/>
+        <attr name="captionColor" format="color"/>
+        <attr name="text" format="string"/>
+        <attr name="textColor" format="color"/>
+        <attr name="hint" format="string"/>
+        <attr name="mandatory" format="boolean"/>
+        <attr name="enabled" format="boolean"/>
+        <attr name="clickable" format="boolean"/>
+        <attr name="focusable" format="boolean"/>
+        <attr name="focusableInTouchMode" format="boolean"/>
+        <attr name="lines" format="integer"/>
+        <attr name="background" format="reference"/>
+    </declare-styleable>
+</resources>

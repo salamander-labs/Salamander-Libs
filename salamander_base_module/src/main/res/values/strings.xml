@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">salamander_base_module</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+    <string name="warning">Warning</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="information">Information</string>
+</resources>
