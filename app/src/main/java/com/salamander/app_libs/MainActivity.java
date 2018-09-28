@@ -1,4 +1,4 @@
-package com.salamander.salamander_location;
+package com.salamander.app_libs;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
