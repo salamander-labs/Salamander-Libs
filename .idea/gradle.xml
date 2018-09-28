@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/salamander_base_module" />
+            <option value="$PROJECT_DIR$/salamander_calendar" />
             <option value="$PROJECT_DIR$/salamander_location" />
             <option value="$PROJECT_DIR$/salamander_network" />
           </set>

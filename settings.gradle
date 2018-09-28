@@ -1,1 +1,1 @@
-include ':app', ':salamander_base_module', ':salamander_location', ':salamander_network'
+include ':app', ':salamander_base_module', ':salamander_location', ':salamander_network', ':salamander_calendar'
