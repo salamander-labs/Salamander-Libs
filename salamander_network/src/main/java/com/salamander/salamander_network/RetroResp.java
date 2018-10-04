@@ -2,13 +2,14 @@ package com.salamander.salamander_network;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
+import com.salamander.salamander_base_module.DialogUtils;
 import com.salamander.salamander_base_module.Utils;
-import com.salamander.salamander_network.log.NetworkLog;
-import com.salamander.salamander_network.log.NetworkLogSQLite;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.net.URLDecoder;
 
 import okhttp3.FormBody;
@@ -25,7 +26,7 @@ public class RetroResp {
         String statusTxt = JSON.getString(jsonObject, "status");
         String msgTxt = JSON.getString(jsonObject, "msg");
         String qryTxt = JSON.getString(jsonObject, "qry");
-        status.setSuccess(!Utils.isEmpty(statusTxt) && statusTxt.equals("success"));
+        status.setSuccess(!Utils.isEmpty(statusTxt) && statusTxt.equals(Retro.STATUS_SUCCESS));
         if (!Utils.isEmpty(msgTxt))
             status.setMessage(msgTxt);
         if (!Utils.isEmpty(qryTxt))
@@ -77,15 +78,22 @@ public class RetroResp {
                 }
             }
 
+            ByteArrayInputStream byteArrayInputStreamError = null;
             if (response.body() instanceof RetroData)
                 retroData = (RetroData) response.body();
             else {
                 responseBody = (Response<ResponseBody>) response;
-                retroData.setResult(Retro.getString(responseBody));
+                try {
+                    //ByteArrayInputStream byteArrayInputStreamBody = new ByteArrayInputStream(Retro.getBytesFromInputStream(Retro.getResponseBody(responseBody).byteStream()));
+                    byteArrayInputStreamError = new ByteArrayInputStream(Retro.getBytesFromInputStream(Retro.getErrorBody(responseBody).byteStream()));
+                    } catch (Exception e) {
+                    Log.d(e.getClass().getSimpleName(), e.getMessage());
+                } finally {
+                    retroData.setResult(Retro.getString(responseBody));
+                }
             }
-            RetroStatus status = Retro.getRetroStatus(responseBody, retroData.getResult());
+            RetroStatus status = Retro.getRetroStatus(responseBody, byteArrayInputStreamError, retroData.getResult());
             status.setHeader(response.raw().toString());
-            status.setTitle(response.raw().message());
             status.setURL(response.raw().request().url().toString());
             status.setStatusCode(response.code());
             retroData.setRetroStatus(status);
@@ -102,13 +110,12 @@ public class RetroResp {
                     String parameter = "";
                     int paramSize = formBody.size();
                     for (int i = 0; i < paramSize; i++)
-                        parameter = parameter + formBody.name(i) + " => " +
-                                URLDecoder.decode(formBody.value(i)) + "; ";
+                        parameter = parameter + formBody.name(i) + " => " + URLDecoder.decode(formBody.value(i)) + "; ";
                     retroData.setParameter(parameter);
                 }
             }
 
-            RetroStatus status = Retro.getRetroStatus(null, throwable.getMessage());
+            RetroStatus status = Retro.getRetroStatus(null, null, throwable.getMessage());
             if (!Retro.isConnected(context))
                 status.setMessage("Not connected to internet.\nCheck your connection and try again");
             status.setHeader(throwable.getClass().getSimpleName());
@@ -118,7 +125,8 @@ public class RetroResp {
 
         @Override
         public void onCall(RetroData retroData) {
-            new NetworkLogSQLite(context).Post(new NetworkLog(retroData));
+            dismissDialog(null);
+            //new NetworkLogSQLite(context).Post(new NetworkLog(retroData));
             /*
             Crashlytics.log(retroData.getClassName());
             Crashlytics.log(retroData.getMethodName());
@@ -135,5 +143,9 @@ public class RetroResp {
     public static void dismissDialog(ProgressDialog progressDialog) {
         if (progressDialog != null)
             progressDialog.dismiss();
+    }
+
+    public static void showRetroDialog(Context context, RetroStatus retroStatus, boolean finishOnDismiss) {
+        DialogUtils.showErrorNetwork(context, retroStatus.getTitle(), retroStatus.getMessage(), finishOnDismiss);
     }
 }

@@ -105,6 +105,8 @@ public class SalamanderDialog extends Dialog {
 
     public SalamanderDialog setPositiveButtonText(String positiveButtonText) {
         bt_ok.setText(Html.fromHtml(positiveButtonText));
+        if (!bt_ok.hasOnClickListeners())
+            bt_ok.setOnClickListener(null);
         return this;
     }
 

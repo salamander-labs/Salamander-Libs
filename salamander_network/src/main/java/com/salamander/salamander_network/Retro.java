@@ -4,32 +4,76 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.Log;
 
 import com.salamander.salamander_base_module.Utils;
+import com.salamander.salamander_network.gson.GsonConverterFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okio.Buffer;
 import okio.BufferedSource;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class Retro {
 
-    private static final String STATUS_SUCCESS = "success";
-    private static final int STATUS_SUCCESS_CODE = 1;
+    private static final String TAG = "Retro";
+
+    public static final String STATUS_SUCCESS = "success";
+    public static final String STATUS_ERROR = "error";
+    public static final String STATUS_WARNING = "warning";
+    public static final int STATUS_SUCCESS_CODE = 1;
+
+    private static String getErrorMessage(ByteArrayInputStream byteArrayInputStreamError) {
+        if (byteArrayInputStreamError == null)
+            return null;
+        BufferedReader r = new BufferedReader(new InputStreamReader(byteArrayInputStreamError));
+        StringBuilder errorResult = new StringBuilder();
+        String line;
+        try {
+            while ((line = r.readLine()) != null) {
+                errorResult.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return errorResult.toString();
+    }
 
     public static String getString(Response<ResponseBody> response) {
-        //Response<ResponseBody> bodyResponse = response;
+        Response<ResponseBody> bodyResponse = response;
         try {
             if (response.isSuccessful()) {
                 String respon = getResponseBody(response).string().trim();
@@ -38,80 +82,77 @@ public class Retro {
                 else
                     return null;
             } else {
-                InputStream i = getErrorBody(response).byteStream();
-                BufferedReader r = new BufferedReader(new InputStreamReader(i));
-                StringBuilder errorResult = new StringBuilder();
-                String line;
-                try {
-                    while ((line = r.readLine()) != null) {
-                        errorResult.append(line).append('\n');
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return errorResult.toString();
+                //InputStream i = getErrorBody(response).byteStream();
+                //ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(getBytesFromInputStream(i));
+                //return getErrorMessage(byteArrayInputStreamError);
             }
         } catch (Exception e) {
-            //new Function().writeToText("getString", e.toString());
-            //Log.e("R.R.->getString", e.toString());
             Utils.showLog(Retro.class.getSimpleName(), "getString", e.toString());
             return null;
         }
+        return null;
     }
-
-    public static String getErrorMsg(Response<RetroStatus> response) {
+    public static byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
         try {
-            return response.errorBody().string();
-        } catch (Exception e) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+            return output.toByteArray();
+        } catch (OutOfMemoryError error) {
             return null;
         }
     }
 
-    public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
-        //Log.e(Salamander.SHORT_PACKAGE_NAME, Retro.class.getSimpleName() + " => getStatus([response, json])  => " + json);
+    public static RetroStatus getRetroStatus(Response<ResponseBody> response, ByteArrayInputStream byteArrayInputStreamError, String json) {
         Utils.showLog(Retro.class.getSimpleName(), "getStatus", json);
-        if (Utils.isEmpty(json)) {
-            try {
-                ResponseBody errorBody = getErrorBody(response);
-                String errorMsg = errorBody.string();
-                /*
-                if (response != null && response.code() != 200)
-                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
-                return new RetroStatus(false, "Network Error.", errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
-                */
-                if (response != null && response.code() != 200)
-                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg);
-                return new RetroStatus(false, "Network Error.", errorMsg);
-            } catch (Exception e) {
-                if (response != null && response.code() != 200)
-                    return new RetroStatus(false, response.code() + " " + response.message(), null);
-                return new RetroStatus(false, "Network Error.", null);
-            }
-        } else {
+        if (!Utils.isEmpty(json) && JSON.isJSONObject(json)) {
             RetroStatus retroStatus = new RetroStatus();
-            JSONObject jsonObject;
+            JSONObject jsonObj;
             try {
-                jsonObject = new JSONObject(json);
-                if (jsonObject.has("status"))
-                    retroStatus.setSuccess(jsonObject.getString("status").trim().toLowerCase().equals(STATUS_SUCCESS));
-                else if (jsonObject.has("retroStatus"))
-                    retroStatus.setSuccess(jsonObject.getInt("retroStatus") == STATUS_SUCCESS_CODE);
-                if (jsonObject.has("title"))
-                    retroStatus.setMessage(jsonObject.getString("title").trim());
-                if (jsonObject.has("msg"))
-                    retroStatus.setMessage(jsonObject.getString("msg").trim());
-                else if (jsonObject.has("message"))
-                    retroStatus.setMessage(jsonObject.getString("message").trim());
-                if (jsonObject.has("sql"))
-                    retroStatus.setQuery(jsonObject.getString("sql").trim());
+                jsonObj = new JSONObject(json);
+                if (jsonObj.has("retroStatus")) {
+                    JSONObject jsonObject = jsonObj.getJSONObject("retroStatus");
+                    if (jsonObject.has("status"))
+                        retroStatus.setSuccess(jsonObject.getString("status").trim().toLowerCase().equals(STATUS_SUCCESS));
+                    if (jsonObject.has("title"))
+                        retroStatus.setMessage(jsonObject.getString("title").trim());
+                    if (jsonObject.has("msg"))
+                        retroStatus.setMessage(jsonObject.getString("msg").trim());
+                    else if (jsonObject.has("message"))
+                        retroStatus.setMessage(jsonObject.getString("message").trim());
+                    if (jsonObject.has("sql"))
+                        retroStatus.setQuery(jsonObject.getString("sql").trim());
+                }
             } catch (JSONException e) {
                 Utils.showLog(Retro.class.getSimpleName(), "getStatus", e.toString());
-                //if (json.contains("<h1>") && json.contains("</h1>"))
-                //    retroStatus.setMessage(json.substring(json.indexOf("<h1>"), json.indexOf("</h1>") + "</h1>".length()));
-                //else
                 retroStatus.setMessage(json);
             }
             return retroStatus;
+        } else {
+            try {
+                String errorMsg = getErrorMessage(byteArrayInputStreamError);
+                if (Utils.isEmpty(errorMsg))
+                    errorMsg = json;
+                if (Utils.isEmpty(errorMsg))
+                    errorMsg = response.message();
+                if (response != null && response.code() != 200)
+                    return new RetroStatus(false, "Error : "+String.valueOf(response.code()), getErrorMsgFromCode(response.code(), errorMsg), null);
+                return new RetroStatus(false, "Server Error", errorMsg, "");
+            } catch (Exception e) {
+                if (response != null && response.code() != 200)
+                    return new RetroStatus(false, "Error : "+String.valueOf(response.code()), response.message(), null);
+                return new RetroStatus(false, "Server Error", e.toString(), "");
+            }
+        }
+    }
+
+    private static String getErrorMsgFromCode(int code, String errorMsg) {
+        switch (code) {
+            case 400 : return "Page Not Found";
+            default: return errorMsg;
         }
     }
 
@@ -125,11 +166,7 @@ public class Retro {
                     .show();
     }
 
-    public static boolean isSuccess(Response<ResponseBody> response, String json) {
-        return getRetroStatus(response, json).isSuccess();
-    }
-
-    private static ResponseBody getResponseBody(final Response<ResponseBody> response) {
+    public static ResponseBody getResponseBody(final Response<ResponseBody> response) {
         return new ResponseBody() {
             @Override
             public MediaType contentType() {
@@ -148,7 +185,9 @@ public class Retro {
         };
     }
 
-    private static ResponseBody getErrorBody(final Response<ResponseBody> response) {
+    public static ResponseBody getErrorBody(final Response<ResponseBody> response) {
+        if (response.errorBody() == null)
+            return null;
         return new ResponseBody() {
             @Override
             public MediaType contentType() {
@@ -167,9 +206,162 @@ public class Retro {
         };
     }
 
+    @Nullable
+    private static ResponseBody cloneResponseBody(@Nullable final ResponseBody body) {
+        if (body == null) {
+            return null;
+        }
+        final Buffer buffer = new Buffer();
+        try {
+            BufferedSource source = body.source();
+            buffer.writeAll(source);
+            source.close();
+        } catch (IOException e) {
+            Log.w(TAG, "Failed to clone ResponseBody");
+            return null;
+        }
+        return new ResponseBody() {
+            @Override
+            public MediaType contentType() {
+                return body.contentType();
+            }
+
+            @Override
+            public long contentLength() {
+                return buffer.size();
+            }
+
+            @Override
+            public BufferedSource source() {
+                return buffer.clone();
+            }
+        };
+    }
+
     @NonNull
     public static RequestBody createPartFromString(String description) {
         return RequestBody.create(MediaType.parse("multipart/form-data"), description);
+    }
+
+    public static Retrofit createRetrofit(Context context, String URL) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .connectTimeout(2, TimeUnit.MINUTES)
+                .readTimeout(2, TimeUnit.MINUTES);
+        SSLContext sslContext = getSSLConfig(context);
+        if (sslContext != null)
+            client.sslSocketFactory(sslContext.getSocketFactory());
+        return new Retrofit.Builder()
+                .baseUrl(URL)
+                .client(client.build())
+                .build();
+    }
+
+    public static Retrofit createRetrofit(Context context, String URL, GsonConverterFactory gsonConverterFactory) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        okhttp3.Response response = chain.proceed(request);
+                        return response;
+                    }
+                })
+                .connectTimeout(2, TimeUnit.MINUTES)
+                .readTimeout(2, TimeUnit.MINUTES);
+        SSLContext sslContext = getSSLConfig(context);
+        if (sslContext != null)
+            client.sslSocketFactory(sslContext.getSocketFactory());
+        return new Retrofit.Builder()
+                .baseUrl(URL)
+                .client(client.build())
+                .addConverterFactory(gsonConverterFactory)
+                .build();
+    }
+
+    public static SSLContext getSSLConfig(Context context) { // throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sslContext = null;
+        try {
+            // Loading CAs from an InputStream
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            Certificate ca;
+            InputStream cert = new FileInputStream(CertUtil.getCertificate(context));
+            try {
+                ca = cf.generateCertificate(cert);
+            } finally {
+                if (cert != null)
+                    cert.close();
+            }
+
+            // Creating a KeyStore containing our trusted CAs
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            // Creating a TrustManager that trusts the CAs in our KeyStore.
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+            // Creating an SSLSocketFactory that uses our TrustManager
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+        } catch (Exception e) {
+            Log.d(TAG, "getSSLConfig([context])  => " + e.toString());
+        }
+        return sslContext;
+    }
+
+    private static OkHttpClient getUnsafeOkHttpClient() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(sslSocketFactory);//, (X509TrustManager)trustAllCerts[0]);
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+
+            builder.connectTimeout(2, TimeUnit.MINUTES);
+            builder.readTimeout(2, TimeUnit.MINUTES);
+            builder.addInterceptor(interceptor);
+
+            return builder.build();
+        } catch (Exception e) {
+            //FileUtil.writeExceptionLog(context, App.class.getSimpleName() + " => getUnsafeOkHttpClient  => ", e);
+            throw new RuntimeException(e);
+        }
     }
 
     public static boolean isConnected(Context context) {

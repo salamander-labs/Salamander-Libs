@@ -16,10 +16,13 @@ public class DialogUtils {
     public static void showErrorNetwork(final Context context, String title, String message, final boolean finish, boolean leftAlign) {
         if (message != null || title != null) {
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
+            salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
             if (title != null)
-                salamanderDialog.setTitle(getMessage(title));
+                //salamanderDialog.setTitle(getMessage(title));
+                salamanderDialog.setDialogTitle(title);
             if (message != null)
-                salamanderDialog.setMessage(Html.fromHtml(getMessage(message)));
+                //salamanderDialog.setMessage(Html.fromHtml(getMessage(message)));
+                salamanderDialog.setMessage(Html.fromHtml(message));
             salamanderDialog.setPositiveButtonClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -29,7 +32,6 @@ public class DialogUtils {
             });
             if (leftAlign)
                 salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
-            salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
             salamanderDialog.show();
         }
     }

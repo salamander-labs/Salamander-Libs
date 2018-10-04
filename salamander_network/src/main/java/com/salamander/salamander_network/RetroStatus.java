@@ -11,8 +11,7 @@ public class RetroStatus implements Parcelable {
     private String URL;
     private String Title, Message, Query;
 
-    public RetroStatus() {
-    }
+    public RetroStatus() {}
 
     public RetroStatus(boolean isSuccess, String title, String message, String query) {
         this.isSuccess = isSuccess;

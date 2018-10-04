@@ -3,6 +3,7 @@ package com.salamander.salamander_network;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSON {
@@ -141,5 +142,14 @@ public class JSON {
             Log.e("JSON->toJSONArray", e.toString());
         }
         return null;
+    }
+
+    public static boolean isJSONObject(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
     }
 }
