@@ -6,12 +6,6 @@ public class Constant {
 
     public static final int DATABASE_VERSION = 1;
 
-    public static final String FORMAT_DB = "yyyy-MM-dd";
-    public static final String FORMAT_DB_FULL = "yyyy-MM-dd HH:mm:ss";
-    public static final String FORMAT_DB_FULL_NO_SEC = "yyyy-MM-dd HH:mm";
-    public static final String FORMAT_UI = "EEEE, dd MMMM yyyy";
-    public static final String FORMAT_UI_NO_DAY = "dd MMMM yyyy";
-
     public static final String TABLE_NETWORK_LOG = "NetworkLog";
     public static final String NETWORK_ID = "ID";
     public static final String NETWORK_USER_ID = "UserID";
