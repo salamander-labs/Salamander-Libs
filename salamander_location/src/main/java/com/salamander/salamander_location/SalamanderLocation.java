@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 
 import com.jaredrummler.android.processes.AndroidProcesses;
 import com.jaredrummler.android.processes.models.AndroidProcess;
-import com.salamander.salamander_base_module.DialogUtils;
+import com.salamander.salamander_base_module.Utils;
+import com.salamander.salamander_base_module.utils.DialogUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +51,7 @@ public class SalamanderLocation {
     public static void setLastLocationAsMock(Context context) {
         LocationSharedPreferenceManager locationManager = getLocationManager(context);
         LocationInfo locationInfo = locationManager.getLastLocation();
-        locationManager.setLastMockPosition(new LocationInfo(locationInfo.getLatitude(), locationInfo.getLongitude(), new Date().getTime(), locationInfo.getProvider()));
+        locationManager.setLastMockPosition(new LocationInfo(locationInfo.getLatitude(), locationInfo.getLongitude(), new Date().getTime(), locationInfo.getProvider(), true));
     }
 
     public static ArrayList<String> getListPackageWithMockPermission(Context context) {
@@ -80,7 +82,7 @@ public class SalamanderLocation {
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 //Log.e("ERROR->getPackageMock", e.toString());
-                //Utils.showLog(BlackListAppManager.class.getSimpleName(), "getPackageMock", e.getMessage());
+                Utils.showLog(e);
             }
         }
         for (ActivityManager.RunningServiceInfo service : processes) {
@@ -113,11 +115,11 @@ public class SalamanderLocation {
 
     public static boolean isMockDisabled(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && isMockLocationEnabled(context)) {
-            DialogUtils.showErrorMessage(context, "Matikan setting lokasi palsu/mock location di Setting -> Developer Options -> Allow mock location", false);
+            DialogUtils.showDialog(context, "Matikan setting lokasi palsu/mock location di Setting -> Developer Options -> Allow mock location");
             return false;
         } else {
             if (!isLocationValid(context)) {
-                DialogUtils.showErrorMessage(context, "Tidak dapat mendapatkan lokasi.<br/>Silakan : <br/>- Matikan semua aplikasi lokasi palsu / fake gps / fake location<br/>- Matikan setting lokasi palsu/mock location <br/>- Restart GPS (matikan lalu hidupkan kembali GPS)<br/>- Tunggu beberapa saat lagi.<br/Buka Google Maps untuk melihat lokasi anda saat ini.", false);
+                DialogUtils.showDialog(context, "Tidak dapat mendapatkan lokasi.<br/>Silakan : <br/>- Matikan semua aplikasi lokasi palsu / fake gps / fake location<br/>- Matikan setting lokasi palsu/mock location <br/>- Restart GPS (matikan lalu hidupkan kembali GPS)<br/>- Tunggu beberapa saat lagi.<br/Buka Google Maps untuk melihat lokasi anda saat ini.");
                 return false;
             }
         }
@@ -135,5 +137,8 @@ public class SalamanderLocation {
                 (lastLocation.getTime() - lastMockPosition.getTime() > 60 * 1000);
     }
 
-
+    public static boolean isGPSActive(Context context) {
+        LocationManager locationManager = (LocationManager) (context.getSystemService(Context.LOCATION_SERVICE));
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
 }

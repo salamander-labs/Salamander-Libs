@@ -2,7 +2,10 @@ package com.salamander.salamander_network;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.salamander.salamander_base_module.Utils;
+import com.salamander.salamander_network.retro.Retro;
+import com.salamander.salamander_network.utils.CertUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,7 +24,7 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
     private PostDownload callback;
     private FileDescriptor fileDescriptor;
     private File destinationFile;
-    private String aURL = null, errorMessage;
+    private String aURL = CERT_URL, errorMessage;
 
     public DownloadCertificate(Context context, File destinationFile, PostDownload callback) {
         this.context = context;
@@ -54,12 +57,12 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
             connection.connect();
 
             int lenghtOfFile = connection.getContentLength();
-            Log.e(TAG, "Length of the file: " + lenghtOfFile);
+            Utils.showLog("DownloadCertificate => Length of the file: " + lenghtOfFile);
 
             InputStream input = new BufferedInputStream(url.openStream());
             //file = new File(destinationFile);
             FileOutputStream output = new FileOutputStream(destinationFile); //context.openFileOutput("content.zip", Context.MODE_PRIVATE);
-            Log.e(TAG, "file saved at " + destinationFile.getAbsolutePath());
+            Utils.showLog("DownloadCertificate => file saved at " + destinationFile.getAbsolutePath());
             fileDescriptor = output.getFD();
 
             byte data[] = new byte[1024];
@@ -81,6 +84,7 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
 
     protected void onProgressUpdate(String... progress) {
         //Log.e(TAG,progress[0]);
+        Utils.showLog("DownloadCertificate => progress : " + progress[0]);
     }
 
     @Override
@@ -88,8 +92,7 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
         if (callback != null) {
             if (!Retro.isConnected(context))
                 errorMessage = "Not connected to internet.\nCheck your connection and try again";
-            if (destinationFile.exists())
-                CertUtil.setCertificate(context, destinationFile);
+            else CertUtil.setCertificate(context, destinationFile);
             callback.downloadDone(errorMessage, destinationFile);
         }
     }

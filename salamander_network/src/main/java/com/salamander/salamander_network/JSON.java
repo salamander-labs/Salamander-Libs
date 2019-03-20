@@ -1,9 +1,8 @@
 package com.salamander.salamander_network;
 
-import android.util.Log;
+import com.salamander.salamander_base_module.Utils;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSON {
@@ -15,7 +14,7 @@ public class JSON {
                     return jsonObject.getString(Key).trim();
             }
         } catch (Exception e) {
-            Log.e("JSON->getStringOrNull", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -27,7 +26,7 @@ public class JSON {
                     return jsonObject.getString(Key).trim();
             }
         } catch (Exception e) {
-            Log.e("JSON->getString", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -39,7 +38,7 @@ public class JSON {
                     return jsonObject.getString(Key).trim();
             }
         } catch (Exception e) {
-            Log.e("JSON->getString", e.toString());
+            Utils.showLog(e);
         }
         return defaultValue;
     }
@@ -49,7 +48,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getInt(Key);
         } catch (Exception e) {
-            Log.e("JSON->getInt", e.toString());
+            Utils.showLog(e);
         }
         return 0;
     }
@@ -59,7 +58,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getDouble(Key);
         } catch (Exception e) {
-            Log.e("JSON->getDouble", e.toString());
+            Utils.showLog(e);
         }
         return 0;
     }
@@ -69,7 +68,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return Float.valueOf(String.valueOf(jsonObject.getDouble(Key)));
         } catch (Exception e) {
-            Log.e("JSON->getFloat", e.toString());
+            Utils.showLog(e);
         }
         return 0;
     }
@@ -79,7 +78,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getBoolean(Key);
         } catch (Exception e) {
-            Log.e("JSON->getBoolean", e.toString());
+            Utils.showLog(e);
         }
         return false;
     }
@@ -90,7 +89,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONObject(Key);
         } catch (Exception e) {
-            Log.e("JSON->toJSONObject", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -100,7 +99,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONObject(Key);
         } catch (Exception e) {
-            Log.e("JSON->toJSONObject", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -111,7 +110,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONArray(Key);
         } catch (Exception e) {
-            Log.e("JSON->toJSONObject", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -121,7 +120,7 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONArray(Key);
         } catch (Exception e) {
-            Log.e("JSON->toJSONObject", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -130,7 +129,7 @@ public class JSON {
         try {
             return new JSONObject(json);
         } catch (Exception e) {
-            Log.e("JSON->toJSONObject", e.toString());
+            Utils.showLog(e);
         }
         return null;
     }
@@ -139,17 +138,8 @@ public class JSON {
         try {
             return new JSONArray(json);
         } catch (Exception e) {
-            Log.e("JSON->toJSONArray", e.toString());
+            Utils.showLog(e);
         }
         return null;
-    }
-
-    public static boolean isJSONObject(String test) {
-        try {
-            new JSONObject(test);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
     }
 }

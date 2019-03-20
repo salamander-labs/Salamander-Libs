@@ -9,12 +9,14 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Looper;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -22,7 +24,9 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -30,8 +34,11 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.salamander.salamander_base_module.Utils;
 
 import java.util.Iterator;
+
+import static com.salamander.salamander_location.LocationUpdateService.BROADCAST_ACTION_UPDATE_LOCATION_PASSIVE;
 
 public class LocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnCompleteListener<LocationSettingsResponse>, GpsStatus.Listener {
 
@@ -42,6 +49,9 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private PendingIntent mRequestLocationUpdatesPendingIntent;
+
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +74,25 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                mCurrentLocation = locationResult.getLastLocation();
+                LocationInfo mPrevLocation = SalamanderLocation.getLastLocation(LocationActivity.this);
+
+                if (mCurrentLocation.getLatitude() != mPrevLocation.getLatitude() || mCurrentLocation.getLongitude() != mPrevLocation.getLongitude())
+                    Utils.showLog("Location Received\nLatitude : " + String.valueOf(mCurrentLocation.getLatitude()) + "\nLongitude : " + String.valueOf(mCurrentLocation.getLongitude()) + "\nMock Location : " + ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && mCurrentLocation.isFromMockProvider()) ? "true" : "false"));
+
+                if (mCurrentLocation != null) {
+                    SalamanderLocation.getLocationManager(LocationActivity.this).setLocation(mCurrentLocation);
+                    Intent locationIntentPassive = new Intent(BROADCAST_ACTION_UPDATE_LOCATION_PASSIVE);
+                    locationIntentPassive.putExtra("location", mCurrentLocation);
+                    sendBroadcast(locationIntentPassive);
+                }
+            }
+        };
     }
 
     /* Check Location Permission for Marshmallow Devices */
@@ -93,16 +122,24 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     /* Starting Location Update Service */
     private void startLocationUpdate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (mLocationRequest != null && mRequestLocationUpdatesPendingIntent != null)
-                    LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, mRequestLocationUpdatesPendingIntent);
+                    LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                locationManager.addGpsStatusListener(this);
+                Location location = locationManager.getLastKnownLocation("gps");
+                if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0)
+                    SalamanderLocation.getLocationManager(this).setLocation(location);
+            }
         } else {
             if (mLocationRequest != null && mRequestLocationUpdatesPendingIntent != null)
                 LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, mRequestLocationUpdatesPendingIntent);
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            locationManager.addGpsStatusListener(this);
+            Location location = locationManager.getLastKnownLocation("gps");
+            if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0)
+                SalamanderLocation.getLocationManager(this).setLocation(location);
         }
-
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationManager.addGpsStatusListener(this);
     }
 
     /* Stop Location Update Service */
@@ -188,9 +225,11 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQ_CHECK_GPS:
-                final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
-                if (!states.isGpsUsable())
-                    checkGPS();
+                if (data != null) {
+                    final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
+                    if (states != null && !states.isGpsUsable())
+                        checkGPS();
+                }
                 break;
         }
     }

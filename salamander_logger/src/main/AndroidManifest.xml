@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.salamander.salamander_logger">
+
+    <application>
+        <activity android:name=".CrashActivity" />
+        <service android:name=".ReportingService"/>
+    </application>
+
+</manifest>

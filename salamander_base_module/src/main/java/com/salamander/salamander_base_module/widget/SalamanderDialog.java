@@ -3,10 +3,6 @@ package com.salamander.salamander_base_module.widget;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.View;
@@ -14,6 +10,10 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.salamander.salamander_base_module.R;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 public class SalamanderDialog extends Dialog {
 
@@ -35,7 +35,7 @@ public class SalamanderDialog extends Dialog {
         super.onCreate(savedInstanceState);
     }
 
-    private void init() {
+    public void init() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         assert getWindow() != null;
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -86,7 +86,6 @@ public class SalamanderDialog extends Dialog {
 
     public SalamanderDialog setPositiveButton(String positiveButtonText, View.OnClickListener onClickListener) {
         setPositiveButtonText(positiveButtonText.replace(" \n", " ").replace("\n", " "));
-        setPositiveButtonText(positiveButtonText);
         setPositiveButtonClickListener(onClickListener);
         return this;
     }
@@ -98,15 +97,12 @@ public class SalamanderDialog extends Dialog {
 
     public SalamanderDialog setNegativeButton(String negativeButtonText, View.OnClickListener onClickListener) {
         setNegativeButtonText(negativeButtonText.replace(" \n", " ").replace("\n", " "));
-        setNegativeButtonText(negativeButtonText);
         setNegativeButtonClickListener(onClickListener);
         return this;
     }
 
     public SalamanderDialog setPositiveButtonText(String positiveButtonText) {
-        bt_ok.setText(Html.fromHtml(positiveButtonText));
-        if (!bt_ok.hasOnClickListeners())
-            bt_ok.setOnClickListener(null);
+        bt_ok.setText(positiveButtonText);
         return this;
     }
 
@@ -128,23 +124,23 @@ public class SalamanderDialog extends Dialog {
     }
 
     public SalamanderDialog setNegativeButtonText(String negativeButtonText) {
-        bt_cancel.setText(Html.fromHtml(negativeButtonText));
+        bt_cancel.setText(negativeButtonText);
         bt_cancel.setVisibility(View.VISIBLE);
         view_separator.setVisibility(View.VISIBLE);
-        bt_ok.setBackground(null);
-        bt_cancel.setBackground(null);
-        bt_ok.setBackground(ContextCompat.getDrawable(context, R.drawable.button_positive_selector));
-        bt_cancel.setBackground(ContextCompat.getDrawable(context, R.drawable.button_negative_selector));
+            bt_ok.setBackground(null);
+            bt_cancel.setBackground(null);
+            bt_ok.setBackground(ContextCompat.getDrawable(context, R.drawable.button_positive_selector));
+            bt_cancel.setBackground(ContextCompat.getDrawable(context, R.drawable.button_negative_selector));
         return this;
     }
 
     public SalamanderDialog setNegativeButtonClickListener(final View.OnClickListener onClickListener) {
         bt_cancel.setVisibility(View.VISIBLE);
         view_separator.setVisibility(View.VISIBLE);
-        bt_ok.setBackground(null);
-        bt_cancel.setBackground(null);
-        bt_ok.setBackground(ContextCompat.getDrawable(context, R.drawable.button_positive_selector));
-        bt_cancel.setBackground(ContextCompat.getDrawable(context, R.drawable.button_negative_selector));
+            bt_ok.setBackground(null);
+            bt_cancel.setBackground(null);
+            bt_ok.setBackground(ContextCompat.getDrawable(context, R.drawable.button_positive_selector));
+            bt_cancel.setBackground(ContextCompat.getDrawable(context, R.drawable.button_negative_selector));
         bt_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,23 +170,23 @@ public class SalamanderDialog extends Dialog {
     public SalamanderDialog setDialogType(int dialogType) {
         switch (dialogType) {
             case 1:
-                tx_title.setText(context.getString(R.string.error));
+                tx_title.setText("Error");
                 tx_title.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_round_rectangle_top_red));
                 break;
             case 2:
-                tx_title.setText(context.getString(R.string.information));
+                tx_title.setText("Information");
                 tx_title.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_round_rectangle_top_blue));
                 break;
             case 3:
-                tx_title.setText(context.getString(R.string.warning));
-                tx_title.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_round_rectangle_top_orange));
+                tx_title.setText("Warning");
+                tx_title.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_round_rectangle_top_yellow));
                 break;
             case 4:
-                tx_title.setText(context.getString(R.string.confirmation));
+                tx_title.setText("Confirmation");
                 tx_title.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_round_rectangle_top_yellow));
                 break;
             default:
-                tx_title.setText(context.getString(R.string.error));
+                tx_title.setText("Error");
                 tx_title.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_round_rectangle_top_red));
                 break;
         }

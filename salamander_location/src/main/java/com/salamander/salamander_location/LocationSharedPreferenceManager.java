@@ -3,6 +3,7 @@ package com.salamander.salamander_location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Build;
 
 import com.salamander.salamander_base_module.Utils;
 
@@ -23,6 +24,7 @@ public class LocationSharedPreferenceManager {
     private String LAST_POSITION_LONGITUDE = "";
     private String LAST_POSITION_TIMESTAMP = "";
     private String LAST_POSITION_PROVIDER = "";
+    private String LAST_POSITION_IS_MOCK = "";
 
     private String LAST_MOCK_POSITION_LATITUDE = "";
     private String LAST_MOCK_POSITION_LONGITUDE = "";
@@ -39,6 +41,7 @@ public class LocationSharedPreferenceManager {
         this.LAST_POSITION_LONGITUDE = SPF_NAME + "_longitude";
         this.LAST_POSITION_TIMESTAMP = SPF_NAME + "_timestamp";
         this.LAST_POSITION_PROVIDER = SPF_NAME + "_provider";
+        this.LAST_POSITION_IS_MOCK = SPF_NAME + "_is_mock";
 
         this.LAST_MOCK_POSITION_LATITUDE = SPF_NAME + "_mock_latitude";
         this.LAST_MOCK_POSITION_LONGITUDE = SPF_NAME + "_mock_longitude";
@@ -74,9 +77,15 @@ public class LocationSharedPreferenceManager {
             }
         } catch (JSONException e) {
             //Log.e("getListBlacklistApp", spfString + " => " + e.toString());
-            Utils.showLog(LocationSharedPreferenceManager.class.getSimpleName(), "getListBlacklistApp", e.toString());
+            Utils.showLog(e);
         }
         return list_blacklist_app;
+    }
+
+    public void setMockLocation(Location location) {
+        LocationInfo locationInfo = new LocationInfo();
+        locationInfo.set(location);
+        setLastMockPosition(locationInfo);
     }
 
     public void setLastMockPosition(LocationInfo locationInfo) {
@@ -100,19 +109,23 @@ public class LocationSharedPreferenceManager {
         LocationInfo locationInfo = new LocationInfo("LAST_LOCATION");
         locationInfo.setLatitude(getDouble(LAST_POSITION_LATITUDE, 0));
         locationInfo.setLongitude(getDouble(LAST_POSITION_LONGITUDE, 0));
+        locationInfo.setLongitude(getDouble(LAST_POSITION_LONGITUDE, 0));
         locationInfo.setTime(spf.getLong(LAST_POSITION_TIMESTAMP, 0));
+        locationInfo.setFromMock(spf.getBoolean(LAST_POSITION_IS_MOCK, false));
         return locationInfo;
     }
 
     public void setLocation(Location location) {
-        setLastLocation(location.getTime(), location.getLatitude(), location.getLongitude());
+        boolean isFromMock = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && location.isFromMockProvider();
+        setLastLocation(location.getTime(), location.getLatitude(), location.getLongitude(), isFromMock);
     }
 
-    public void setLastLocation(long timestamp, double latitude, double longitude) {
+    public void setLastLocation(long timestamp, double latitude, double longitude, boolean isFromMock) {
         editor = spf.edit();
         editor.putLong(LAST_POSITION_TIMESTAMP, timestamp);
         putDouble(LAST_POSITION_LATITUDE, latitude);
         putDouble(LAST_POSITION_LONGITUDE, longitude);
+        editor.putBoolean(LAST_POSITION_IS_MOCK, isFromMock);
         editor.apply();
     }
 

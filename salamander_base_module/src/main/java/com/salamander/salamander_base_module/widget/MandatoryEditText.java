@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.method.KeyListener;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -40,7 +40,7 @@ public class MandatoryEditText extends LinearLayout {
         init(context, attrs, defStyleAttr);
     }
 
-    public void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public void init(Context context,  @Nullable AttributeSet attrs, int defStyleAttr) {
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MandatoryEditText, defStyleAttr, 0);
 
         String textCaption, textValue, textHint;
@@ -69,7 +69,7 @@ public class MandatoryEditText extends LinearLayout {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 txValue.setBackground(typedArray.getDrawable(R.styleable.MandatoryEditText_background));
             else
-                txValue.setBackgroundDrawable(typedArray.getDrawable(R.styleable.MandatoryEditText_background));
+                txValue.setBackground(typedArray.getDrawable(R.styleable.MandatoryEditText_background));
         } finally {
             typedArray.recycle();
         }

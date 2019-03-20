@@ -3,12 +3,13 @@ package com.salamander.salamander_location;
 import android.content.Context;
 import android.location.Address;
 import android.location.Location;
+import android.widget.Toast;
 
 import com.salamander.salamander_base_module.Utils;
 import com.salamander.salamander_network.JSON;
-import com.salamander.salamander_network.RetroData;
-import com.salamander.salamander_network.RetroResp;
-import com.salamander.salamander_network.RetroStatus;
+import com.salamander.salamander_network.retro.RetroData;
+import com.salamander.salamander_network.retro.RetroResp;
+import com.salamander.salamander_network.retro.RetroStatus;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,23 +37,28 @@ public class Geocoding {
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
     public static final String UNKNOWN_ERROR = "UNKNOWN_ERROR";
 
-    public static void getLocationAddress(final Context context, final double latitude, final double longitude, final String apiKey, final OnCB onCB) {
+    public static void getAddressFromLocation(final Context context, final double latitude, final double longitude, final String apiKey, final OnCB onCB) {
         Location location = new Location("");
         location.setLatitude(latitude);
         location.setLongitude(longitude);
-        SmartLocation.with(context).geocoding().reverse(location, new OnReverseGeocodingListener() {
-            @Override
-            public void onAddressResolved(Location location, List<Address> list) {
-                if (list.size() > 0) {
-                    RetroStatus retroStatus = new RetroStatus();
-                    retroStatus.setSuccess(true);
-                    retroStatus.setMessage(list.get(0).getAddressLine(0));
-                    onCB.onCB(retroStatus);
-                } else getLocationAddressFromGoogleAPI(context, latitude, longitude, apiKey, onCB);
-            }
-        });
+        if (location.getLatitude() >= -90 && location.getLatitude() <= 90 && location.getLongitude() >= -180 && location.getLatitude() <= 180)
+            SmartLocation.with(context).geocoding().reverse(location, new OnReverseGeocodingListener() {
+                @Override
+                public void onAddressResolved(Location location, List<Address> list) {
+                    if (list.size() > 0) {
+                        RetroStatus retroStatus = new RetroStatus();
+                        retroStatus.setSuccess(true);
+                        retroStatus.setMessage(list.get(0).getAddressLine(0));
+                        onCB.onCB(retroStatus);
+                    } //else
+                        //getGeocodingFromGoogleAPI(context, latitude, longitude, apiKey, onCB);
+                }
+            });
+        else
+            Toast.makeText(context, "Latitude : " + String.valueOf(location.getLatitude()) + "\n Longitude : " + String.valueOf(location.getLongitude() + "\n is not a valid location."), Toast.LENGTH_SHORT).show();
     }
-    private static void getLocationAddressFromGoogleAPI(final Context context, final double latitude, final double longitude, final String apiKey, final OnCB onCB) {
+
+    private static void getGeocodingFromGoogleAPI(final Context context, final double latitude, final double longitude, final String apiKey, final OnCB onCB) {
         IC ic = createRetrofit().create(IC.class);
         String formatLatLng = String.valueOf(latitude) + "," + String.valueOf(longitude);
         ic.getLocation(formatLatLng, apiKey).enqueue(new RetroResp.SuccessCallback<ResponseBody>(context) {
