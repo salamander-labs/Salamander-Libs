@@ -50,7 +50,7 @@ public class SalamanderExceptionHandler implements Thread.UncaughtExceptionHandl
 
     private void startActivity(Throwable throwable, ErrorLog errorLog) {
         Intent intent = new Intent(context, CrashActivity.class);
-        intent.putExtra("title", "GoSAM Force Closed");
+        intent.putExtra("title", "Application Force Closed");
         intent.putExtra("message", throwable.getMessage());
         intent.putExtra("logcat", errorLog.getLogCat());
         context.startActivity(intent);

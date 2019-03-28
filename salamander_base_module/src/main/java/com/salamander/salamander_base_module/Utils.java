@@ -50,13 +50,13 @@ public class Utils {
 
     @SuppressWarnings("deprecation")
     public static Spanned textToHtml(String text) {
-        Spanned result;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            result = Html.fromHtml(text);
-        } else {
-            result = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
-        }
-        return result;
+        if (Utils.isEmpty(text))
+            text = "";
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+            return Html.fromHtml(text);
+        else
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
     }
 
     public static void showLog(String logText) {

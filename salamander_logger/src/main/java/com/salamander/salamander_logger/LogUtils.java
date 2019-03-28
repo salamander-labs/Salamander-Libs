@@ -119,8 +119,8 @@ public class LogUtils {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .connectTimeout(2, TimeUnit.MINUTES)
-                .readTimeout(2, TimeUnit.MINUTES);
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS);
         return new Retrofit.Builder()
                 .baseUrl(URL)
                 .client(client.build())
