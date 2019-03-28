@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
@@ -34,6 +33,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import androidx.annotation.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -50,8 +50,6 @@ public class Retro {
     public interface OnCB {
         void onCB(RetroStatus retroStatus);
     }
-
-    public static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
     public static String getString(Response<ResponseBody> response) {
         //Response<ResponseBody> bodyResponse = response;
@@ -217,7 +215,7 @@ public class Retro {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .connectTimeout(2, TimeUnit.MINUTES)
+                .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
         SSLContext sslContext = getSSLConfig(context);
         if (sslContext != null)
@@ -240,7 +238,7 @@ public class Retro {
                         return response;
                     }
                 })
-                .connectTimeout(2, TimeUnit.MINUTES)
+                .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
         SSLContext sslContext = getSSLConfig(context);
         if (sslContext != null)
@@ -322,7 +320,7 @@ public class Retro {
                 }
             });
 
-            builder.connectTimeout(2, TimeUnit.MINUTES);
+            builder.connectTimeout(30, TimeUnit.SECONDS);
             builder.readTimeout(2, TimeUnit.MINUTES);
             builder.addInterceptor(interceptor);
 
