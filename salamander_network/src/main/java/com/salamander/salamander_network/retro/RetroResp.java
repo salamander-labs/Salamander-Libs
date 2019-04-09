@@ -132,15 +132,6 @@ public class RetroResp {
 
         @Override
         public void onCall(RetroData retroData) {
-            //new NetworkLogSQLite(context).Post(new NetworkLog(retroData));
-            //Crashlytics.log(retroData.getClassName());
-            //Crashlytics.log(retroData.getMethodName());
-            //Crashlytics.log(retroData.getParameter());
-            //Crashlytics.log(retroData.getRetroStatus().getHeader());
-            //Crashlytics.log(retroData.getResult());
-            //if (!retroData.isSuccess())
-            //Crashlytics.log(retroData.getRetroStatus().getMessage());
-            //Crashlytics.logException(new Exception("onCall"));
         }
     }
 
@@ -149,8 +140,7 @@ public class RetroResp {
             if (salamanderProgressDialog != null)
                 salamanderProgressDialog.cancel();
         } catch (Exception e) {
-            //Crashlytics.log(e.getMessage());
-            //Crashlytics.logException(new Exception("Close Dialog"));
+            Utils.showLog(e);
         }
     }
 }

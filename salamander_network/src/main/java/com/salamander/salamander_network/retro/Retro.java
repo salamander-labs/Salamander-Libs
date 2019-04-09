@@ -24,6 +24,8 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -88,23 +90,28 @@ public class Retro {
         }
     }
 
+    private static String getJSON(String response) {
+        Pattern pattern = Pattern.compile("((?s)<div(.*)div>)((?s).*)", Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(response);
+        String result = response;
+        if (matcher.find())
+            result = matcher.group(1);
+        return result;
+    }
+
     public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
         Utils.showLog(json);
+        json = getJSON(json);
         if (Utils.isEmpty(json)) {
             try {
                 ResponseBody errorBody = getErrorBody(response);
                 String errorMsg = errorBody.string();
-                /*
                 if (response != null && response.code() != 200)
-                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
-                return new RetroStatus(false, "Network Error.", errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
-                */
-                if (response != null && response.code() != 200)
-                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg);
+                    return new RetroStatus(false, response.code() + " - " + response.message(), Utils.isEmpty(errorMsg) ? "No Response from Server" : errorMsg, "");
                 return new RetroStatus(false, "Error.", errorMsg);
             } catch (Exception e) {
                 if (response != null && response.code() != 200)
-                    return new RetroStatus(false, response.code() + " " + response.message(), null);
+                    return new RetroStatus(false, response.code() + " - " + response.message(), "No Response from Server", null);
                 return new RetroStatus(false, e.toString(), null);
             }
         } else {
@@ -116,43 +123,17 @@ public class Retro {
 
                     JSONObject jsonObjectStatus = jsonObject.getJSONObject(RetroConst.RETRO_RESPONSE_STATUS);
                     retroStatus = new RetroStatus(jsonObjectStatus);
-                    /*
-                    if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
-                        retroStatus.setSuccess(jsonObjectStatus.getString(RetroConst.RETRO_STATUS).trim().toLowerCase().equals(RetroConst.STATUS_SUCCESS));
-                    else if (jsonObjectStatus.has(RetroConst.RETRO_RESPONSE_STATUS))
-                        retroStatus.setSuccess(jsonObjectStatus.getInt(RetroConst.RETRO_RESPONSE_STATUS) == RetroConst.STATUS_SUCCESS_CODE);
-                    if (jsonObjectStatus.has(RetroConst.RETRO_TITLE))
-                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_TITLE).trim());
-                    if (jsonObjectStatus.has(RetroConst.RETRO_MSG))
-                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MSG).trim());
-                    else if (jsonObjectStatus.has(RetroConst.RETRO_MESSAGE))
-                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MESSAGE).trim());
-                    if (jsonObjectStatus.has(RetroConst.RETRO_SQL))
-                        retroStatus.setQuery(jsonObjectStatus.getString(RetroConst.RETRO_SQL).trim());
-                        */
                 } else if (jsonObject.has(RetroConst.RETRO_STATUS)) {
 
                     JSONObject jsonObjectStatus = jsonObject.getJSONObject(RetroConst.RETRO_STATUS);
                     retroStatus = new RetroStatus(jsonObjectStatus);
-                    /*
-                    if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
-                        retroStatus.setSuccess(jsonObjectStatus.getString(RetroConst.RETRO_STATUS).trim().toLowerCase().equals(RetroConst.STATUS_SUCCESS));
-                    else if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
-                        retroStatus.setSuccess(jsonObjectStatus.getInt(RetroConst.RETRO_STATUS) == RetroConst.STATUS_SUCCESS_CODE);
-                    if (jsonObjectStatus.has(RetroConst.RETRO_TITLE))
-                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_TITLE).trim());
-                    if (jsonObjectStatus.has(RetroConst.RETRO_MSG))
-                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MSG).trim());
-                    else if (jsonObjectStatus.has(RetroConst.RETRO_MESSAGE))
-                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MESSAGE).trim());
-                    if (jsonObjectStatus.has(RetroConst.RETRO_SQL))
-                        retroStatus.setQuery(jsonObjectStatus.getString(RetroConst.RETRO_SQL).trim());
-                        */
                 }
+                if (response != null && response.code() != 200)
+                    retroStatus.setTitle(response.code() + " - " + response.message());
             } catch (JSONException e) {
                 Utils.showLog(e);
                 try {
-                    retroStatus.setTitle(getStringInsideTag(json, "title"));
+                    retroStatus.setTitle((json.toLowerCase().contains("title") ? getStringInsideTag(json, "title") : "Error"));
                     retroStatus.setMessage(getStringInsideTag(json, "body"));
                 } catch (Exception e1) {
                     retroStatus.setMessage(json);
@@ -161,6 +142,82 @@ public class Retro {
             return retroStatus;
         }
     }
+
+//
+//    public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
+//        Utils.showLog(json);
+//        json = getJSON(json);
+//        if (Utils.isEmpty(json)) {
+//            try {
+//                ResponseBody errorBody = getErrorBody(response);
+//                String errorMsg = errorBody.string();
+//                /*
+//                if (response != null && response.code() != 200)
+//                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
+//                return new RetroStatus(false, "Network Error.", errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
+//                */
+//                if (response != null && response.code() != 200)
+//                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg);
+//                return new RetroStatus(false, "Error.", errorMsg);
+//            } catch (Exception e) {
+//                if (response != null && response.code() != 200)
+//                    return new RetroStatus(false, response.code() + " " + response.message(), null);
+//                return new RetroStatus(false, e.toString(), null);
+//            }
+//        } else {
+//            RetroStatus retroStatus = new RetroStatus();
+//            JSONObject jsonObject;
+//            try {
+//                jsonObject = new JSONObject(json);
+//                if (jsonObject.has(RetroConst.RETRO_RESPONSE_STATUS)) {
+//
+//                    JSONObject jsonObjectStatus = jsonObject.getJSONObject(RetroConst.RETRO_RESPONSE_STATUS);
+//                    retroStatus = new RetroStatus(jsonObjectStatus);
+//                    /*
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
+//                        retroStatus.setSuccess(jsonObjectStatus.getString(RetroConst.RETRO_STATUS).trim().toLowerCase().equals(RetroConst.STATUS_SUCCESS));
+//                    else if (jsonObjectStatus.has(RetroConst.RETRO_RESPONSE_STATUS))
+//                        retroStatus.setSuccess(jsonObjectStatus.getInt(RetroConst.RETRO_RESPONSE_STATUS) == RetroConst.STATUS_SUCCESS_CODE);
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_TITLE))
+//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_TITLE).trim());
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_MSG))
+//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MSG).trim());
+//                    else if (jsonObjectStatus.has(RetroConst.RETRO_MESSAGE))
+//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MESSAGE).trim());
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_SQL))
+//                        retroStatus.setQuery(jsonObjectStatus.getString(RetroConst.RETRO_SQL).trim());
+//                        */
+//                } else if (jsonObject.has(RetroConst.RETRO_STATUS)) {
+//
+//                    JSONObject jsonObjectStatus = jsonObject.getJSONObject(RetroConst.RETRO_STATUS);
+//                    retroStatus = new RetroStatus(jsonObjectStatus);
+//                    /*
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
+//                        retroStatus.setSuccess(jsonObjectStatus.getString(RetroConst.RETRO_STATUS).trim().toLowerCase().equals(RetroConst.STATUS_SUCCESS));
+//                    else if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
+//                        retroStatus.setSuccess(jsonObjectStatus.getInt(RetroConst.RETRO_STATUS) == RetroConst.STATUS_SUCCESS_CODE);
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_TITLE))
+//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_TITLE).trim());
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_MSG))
+//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MSG).trim());
+//                    else if (jsonObjectStatus.has(RetroConst.RETRO_MESSAGE))
+//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MESSAGE).trim());
+//                    if (jsonObjectStatus.has(RetroConst.RETRO_SQL))
+//                        retroStatus.setQuery(jsonObjectStatus.getString(RetroConst.RETRO_SQL).trim());
+//                        */
+//                }
+//            } catch (JSONException e) {
+//                Utils.showLog(e);
+//                try {
+//                    retroStatus.setTitle((json.toLowerCase().contains("title") ? getStringInsideTag(json, "title") : "Error"));
+//                    retroStatus.setMessage(getStringInsideTag(json, "body"));
+//                } catch (Exception e1) {
+//                    retroStatus.setMessage(json);
+//                }
+//            }
+//            return retroStatus;
+//        }
+//    }
 
     public static boolean isSuccess(Response<ResponseBody> response, String json) {
         return getRetroStatus(response, json).isSuccess();
@@ -352,6 +409,7 @@ public class Retro {
             if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_WARNING);
             else salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
+            salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
             if (!Utils.isEmpty(title))
                 salamanderDialog.setDialogTitle(title);
             if (!Utils.isEmpty(message))
