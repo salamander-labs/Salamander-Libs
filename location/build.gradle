@@ -1,0 +1,47 @@
+apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.android.library'
+
+publish {
+
+    def groupProjectID = 'com.salamander.location'
+    def artifactProjectID = 'location'
+    def publishVersionID = '0.0.1'
+
+    userOrg = 'salamander-labs'
+    repoName = 'Salamander-Libs'
+    groupId = groupProjectID
+    artifactId = artifactProjectID
+    publishVersion = publishVersionID
+    desc = 'Location Utility'
+    website = 'https://github.com/salamander-labs/Salamander-Libs'
+}
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "0.0.1"
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api project(':network')
+    api 'com.google.android.gms:play-services-location:16.0.0'
+    api 'com.jaredrummler:android-processes:1.0.9'
+    implementation 'io.nlopez.smartlocation:library:3.3.3'
+}

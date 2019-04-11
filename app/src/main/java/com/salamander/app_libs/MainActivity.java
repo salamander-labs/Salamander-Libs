@@ -6,12 +6,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.salamander.salamander_base_module.Utils;
-import com.salamander.salamander_network.JSON;
-import com.salamander.salamander_network.retro.Retro;
-import com.salamander.salamander_network.retro.RetroData;
-import com.salamander.salamander_network.retro.RetroResp;
-import com.salamander.salamander_network.retro.RetroStatus;
+import com.salamander.core.Utils;
+import com.salamander.network.JSON;
+import com.salamander.network.retro.Retro;
+import com.salamander.network.retro.RetroData;
+import com.salamander.network.retro.RetroResp;
+import com.salamander.network.retro.RetroStatus;
 
 import org.json.JSONObject;
 

@@ -20,8 +20,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':salamander_location')
-    //implementation project(':salamander_calendar')
-    //implementation project(':salamander_logger')
-    //implementation project(':salamander_image_cropper')
+    implementation project(':location')
+    implementation project(':calendar')
+    implementation project(':logger')
+    implementation project(':cropper')
 }

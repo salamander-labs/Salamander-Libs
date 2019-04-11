@@ -1,1 +1,1 @@
-include ':app', ':salamander_base_module', ':salamander_network', ':salamander_calendar', ':salamander_location', ':salamander_logger', ':salamander_image_cropper'
+include ':app', ':core', ':network', ':calendar', ':location', ':logger', ':cropper'
