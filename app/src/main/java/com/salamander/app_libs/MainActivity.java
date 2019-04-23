@@ -6,16 +6,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.salamander.core.Utils;
-import com.salamander.network.JSON;
+import com.salamander.core.utils.DialogUtils;
+import com.salamander.network.DownloadCertificate;
 import com.salamander.network.retro.Retro;
 import com.salamander.network.retro.RetroData;
 import com.salamander.network.retro.RetroResp;
 import com.salamander.network.retro.RetroStatus;
 
-import org.json.JSONObject;
-
-import androidx.appcompat.app.AppCompatActivity;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         tx_test.setText("0");
         tx_test2.setText("0");
+/*
         tx_test2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -54,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception exception) {
             Utils.showLog(exception);
         }
+*/
+        new DownloadCertificate(this, new DownloadCertificate.PostDownload() {
+            @Override
+            public void downloadDone(String errorMessage) {
+                if (errorMessage != null) {
+                    DialogUtils.showDialog(activity, errorMessage, true);
+                }
+            }
+        }).execute();
 
         bt_test.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,13 +82,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private interface getData {
-        @GET("andro_m_data.php")
+        @GET("check_version")
         Call<ResponseBody> get();
     }
 
     private void getData(final Retro.OnCB onCB) {
-        String url = "http://dtswebapi.datascrip.co.id/demo/rest_api/android_data/";
-        url = "http://dtswebapi.datascrip.co.id/demo/rest_api/application/models/";
+        String url = "https://intraweb.datascrip.co.id/go-sam/android_data/";
+        //url = "http://dtswebapi.datascrip.co.id/demo/rest_api/application/models/";
         getData getData = Retro.createRetrofit(this, url).create(MainActivity.getData.class);
         getData.get().enqueue(new RetroResp.SuccessCallback<ResponseBody>(activity) {
             @Override

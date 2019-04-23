@@ -3,12 +3,12 @@ apply plugin: 'com.android.library'
 
 publish {
 
-    def groupProjectID = 'com.salamander.core'
+    def groupProjectID = 'com.salamander'
     def artifactProjectID = 'core'
     def publishVersionID = '0.0.1'
 
     userOrg = 'salamander-labs'
-    repoName = 'Salamander-Libs'
+    repoName = 'salamander-libs'
     groupId = groupProjectID
     artifactId = artifactProjectID
     publishVersion = publishVersionID

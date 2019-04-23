@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.salamander.core.Utils;
 import com.salamander.core.widget.SalamanderDialog;
 import com.salamander.network.gson.GsonConverterFactory;
@@ -16,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,7 +36,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import androidx.annotation.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -143,82 +143,6 @@ public class Retro {
         }
     }
 
-//
-//    public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
-//        Utils.showLog(json);
-//        json = getJSON(json);
-//        if (Utils.isEmpty(json)) {
-//            try {
-//                ResponseBody errorBody = getErrorBody(response);
-//                String errorMsg = errorBody.string();
-//                /*
-//                if (response != null && response.code() != 200)
-//                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
-//                return new RetroStatus(false, "Network Error.", errorMsg.substring(errorMsg.indexOf("<h1>") + "<h1>".length(), errorMsg.indexOf("</h1>")) + "<br/>" + errorMsg.substring(errorMsg.indexOf("<p>") + "<p>".length(), errorMsg.indexOf("</p>")));
-//                */
-//                if (response != null && response.code() != 200)
-//                    return new RetroStatus(false, response.code() + " " + response.message(), errorMsg);
-//                return new RetroStatus(false, "Error.", errorMsg);
-//            } catch (Exception e) {
-//                if (response != null && response.code() != 200)
-//                    return new RetroStatus(false, response.code() + " " + response.message(), null);
-//                return new RetroStatus(false, e.toString(), null);
-//            }
-//        } else {
-//            RetroStatus retroStatus = new RetroStatus();
-//            JSONObject jsonObject;
-//            try {
-//                jsonObject = new JSONObject(json);
-//                if (jsonObject.has(RetroConst.RETRO_RESPONSE_STATUS)) {
-//
-//                    JSONObject jsonObjectStatus = jsonObject.getJSONObject(RetroConst.RETRO_RESPONSE_STATUS);
-//                    retroStatus = new RetroStatus(jsonObjectStatus);
-//                    /*
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
-//                        retroStatus.setSuccess(jsonObjectStatus.getString(RetroConst.RETRO_STATUS).trim().toLowerCase().equals(RetroConst.STATUS_SUCCESS));
-//                    else if (jsonObjectStatus.has(RetroConst.RETRO_RESPONSE_STATUS))
-//                        retroStatus.setSuccess(jsonObjectStatus.getInt(RetroConst.RETRO_RESPONSE_STATUS) == RetroConst.STATUS_SUCCESS_CODE);
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_TITLE))
-//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_TITLE).trim());
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_MSG))
-//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MSG).trim());
-//                    else if (jsonObjectStatus.has(RetroConst.RETRO_MESSAGE))
-//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MESSAGE).trim());
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_SQL))
-//                        retroStatus.setQuery(jsonObjectStatus.getString(RetroConst.RETRO_SQL).trim());
-//                        */
-//                } else if (jsonObject.has(RetroConst.RETRO_STATUS)) {
-//
-//                    JSONObject jsonObjectStatus = jsonObject.getJSONObject(RetroConst.RETRO_STATUS);
-//                    retroStatus = new RetroStatus(jsonObjectStatus);
-//                    /*
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
-//                        retroStatus.setSuccess(jsonObjectStatus.getString(RetroConst.RETRO_STATUS).trim().toLowerCase().equals(RetroConst.STATUS_SUCCESS));
-//                    else if (jsonObjectStatus.has(RetroConst.RETRO_STATUS))
-//                        retroStatus.setSuccess(jsonObjectStatus.getInt(RetroConst.RETRO_STATUS) == RetroConst.STATUS_SUCCESS_CODE);
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_TITLE))
-//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_TITLE).trim());
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_MSG))
-//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MSG).trim());
-//                    else if (jsonObjectStatus.has(RetroConst.RETRO_MESSAGE))
-//                        retroStatus.setMessage(jsonObjectStatus.getString(RetroConst.RETRO_MESSAGE).trim());
-//                    if (jsonObjectStatus.has(RetroConst.RETRO_SQL))
-//                        retroStatus.setQuery(jsonObjectStatus.getString(RetroConst.RETRO_SQL).trim());
-//                        */
-//                }
-//            } catch (JSONException e) {
-//                Utils.showLog(e);
-//                try {
-//                    retroStatus.setTitle((json.toLowerCase().contains("title") ? getStringInsideTag(json, "title") : "Error"));
-//                    retroStatus.setMessage(getStringInsideTag(json, "body"));
-//                } catch (Exception e1) {
-//                    retroStatus.setMessage(json);
-//                }
-//            }
-//            return retroStatus;
-//        }
-//    }
-
     public static boolean isSuccess(Response<ResponseBody> response, String json) {
         return getRetroStatus(response, json).isSuccess();
     }
@@ -270,13 +194,33 @@ public class Retro {
     public static Retrofit createRetrofit(Context context, String URL) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        /*
+        CertificatePinner certificatePinner = new CertificatePinner.Builder()
+                .add("*.datascrip.co.id", "sha256/d6VGc/Yo2Q1rEQOfHNwksr7iVI9ul2vz74yuiQJRYYI=")
+                .add("*.datascrip.co.id", "sha256/nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=")
+                .add("*.datascrip.co.id", "sha256/r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E=")
+                .build();
+        */
+
         OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        okhttp3.Response response = chain.proceed(request);
+                        return response;
+                    }
+                })
+                //.certificatePinner(certificatePinner)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
+
         SSLContext sslContext = getSSLConfig(context);
-        if (sslContext != null)
-            client.sslSocketFactory(sslContext.getSocketFactory());
+        TrustManager[] trustManagers = getTrustManager(context);
+        if (sslContext != null && trustManagers != null && trustManagers.length > 0)
+            client.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
+
         return new Retrofit.Builder()
                 .baseUrl(URL)
                 .client(client.build())
@@ -297,9 +241,12 @@ public class Retro {
                 })
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
+
         SSLContext sslContext = getSSLConfig(context);
-        if (sslContext != null)
-            client.sslSocketFactory(sslContext.getSocketFactory());
+        TrustManager[] trustManagers = getTrustManager(context);
+        if (sslContext != null && trustManagers != null && trustManagers.length > 0)
+            client.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
+
         return new Retrofit.Builder()
                 .baseUrl(URL)
                 .client(client.build())
@@ -310,15 +257,28 @@ public class Retro {
     public static SSLContext getSSLConfig(Context context) { // throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = null;
         try {
+            // Creating an SSLSocketFactory that uses our TrustManager
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, getTrustManager(context), null);
+        } catch (Exception e) {
+            Log.d("getSSLConfig", "getSSLConfig([context])  => " + e.toString());
+        }
+        return sslContext;
+    }
+
+    @SuppressWarnings("TryFinallyCanBeTryWithResources")
+    private static TrustManager[] getTrustManager(Context context) {
+        TrustManagerFactory trustManagerFactory;
+        try {
             // Loading CAs from an InputStream
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             Certificate ca;
-            InputStream cert = new FileInputStream(CertUtil.getCertificate(context));
+            //InputStream cert = new FileInputStream(CertUtil.getCertificate(context));
+            InputStream cert = CertUtil.stringToStream(CertUtil.getCertificateText(context));
             try {
                 ca = cf.generateCertificate(cert);
             } finally {
-                if (cert != null)
-                    cert.close();
+                cert.close();
             }
 
             // Creating a KeyStore containing our trusted CAs
@@ -329,16 +289,13 @@ public class Retro {
 
             // Creating a TrustManager that trusts the CAs in our KeyStore.
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
-
-            // Creating an SSLSocketFactory that uses our TrustManager
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
+            trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
+            trustManagerFactory.init(keyStore);
+            return trustManagerFactory.getTrustManagers();
         } catch (Exception e) {
             Log.d("getSSLConfig", "getSSLConfig([context])  => " + e.toString());
         }
-        return sslContext;
+        return null;
     }
 
     private static OkHttpClient getUnsafeOkHttpClient() {
@@ -369,7 +326,7 @@ public class Retro {
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory);//, (X509TrustManager)trustAllCerts[0]);
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String hostname, SSLSession session) {

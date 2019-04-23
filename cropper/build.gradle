@@ -1,10 +1,26 @@
+apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'com.android.library'
+
+publish {
+
+    def groupProjectID = 'com.salamander'
+    def artifactProjectID = 'cropper'
+    def publishVersionID = '0.0.1'
+
+    userOrg = 'salamander-labs'
+    repoName = 'salamander-libs'
+    groupId = groupProjectID
+    artifactId = artifactProjectID
+    publishVersion = publishVersionID
+    desc = 'Image Cropper'
+    website = 'https://github.com/salamander-labs/Salamander-Libs'
+}
 
 android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

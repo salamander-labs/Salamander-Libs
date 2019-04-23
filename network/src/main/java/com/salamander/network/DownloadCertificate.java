@@ -8,9 +8,6 @@ import com.salamander.network.retro.Retro;
 import com.salamander.network.utils.CertUtil;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -22,21 +19,17 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
 
     private Context context;
     private PostDownload callback;
-    private FileDescriptor fileDescriptor;
-    private File destinationFile;
-    private String aURL = CERT_URL, errorMessage;
+    private String aURL = CERT_URL, errorMessage, certText;
 
-    public DownloadCertificate(Context context, File destinationFile, PostDownload callback) {
+    public DownloadCertificate(Context context, PostDownload callback) {
         this.context = context;
         this.callback = callback;
-        this.destinationFile = destinationFile;
     }
 
-    public DownloadCertificate(Context context, File destinationFile, String aURL, PostDownload callback) {
+    public DownloadCertificate(Context context, String aURL, PostDownload callback) {
         this.context = context;
         this.callback = callback;
         this.aURL = aURL;
-        this.destinationFile = destinationFile;
     }
 
     @Override
@@ -61,6 +54,8 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
 
             InputStream input = new BufferedInputStream(url.openStream());
             //file = new File(destinationFile);
+            certText = CertUtil.streamToString(input);
+            /*
             FileOutputStream output = new FileOutputStream(destinationFile); //context.openFileOutput("content.zip", Context.MODE_PRIVATE);
             Utils.showLog("DownloadCertificate => file saved at " + destinationFile.getAbsolutePath());
             fileDescriptor = output.getFD();
@@ -76,10 +71,11 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
             output.flush();
             output.close();
             input.close();
+            */
         } catch (Exception e) {
             errorMessage = e.getClass() + " => " + e.getMessage();
         }
-        return errorMessage;
+        return certText;
     }
 
     protected void onProgressUpdate(String... progress) {
@@ -88,16 +84,17 @@ public class DownloadCertificate extends AsyncTask<String, String, String> {
     }
 
     @Override
-    protected void onPostExecute(String errorMessage) {
+    protected void onPostExecute(String certText) {
         if (callback != null) {
             if (!Retro.isConnected(context))
                 errorMessage = "Not connected to internet.\nCheck your connection and try again";
-            else CertUtil.setCertificate(context, destinationFile);
-            callback.downloadDone(errorMessage, destinationFile);
+            else //CertUtil.setCertificate(context, destinationFile);
+                CertUtil.setCertificate(context, certText);
+            callback.downloadDone(errorMessage);
         }
     }
 
     public interface PostDownload {
-        void downloadDone(String errorMessage, File downloadedFile);
+        void downloadDone(String errorMessage);
     }
 }
