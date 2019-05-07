@@ -363,7 +363,7 @@ public class Retro {
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
             if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_INFORMATION);
-            if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
+            else if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_WARNING);
             else salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
             salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
