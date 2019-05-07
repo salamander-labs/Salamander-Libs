@@ -35,6 +35,10 @@ android {
             minifyEnabled false
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 repositories {
@@ -44,5 +48,5 @@ repositories {
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     api 'androidx.legacy:legacy-support-v4:1.0.0'
-    api 'com.google.android.material:material:1.1.0-alpha05'
+    api 'com.google.android.material:material:1.1.0-alpha06'
 }

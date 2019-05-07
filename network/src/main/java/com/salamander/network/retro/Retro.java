@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -363,7 +362,7 @@ public class Retro {
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
             if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_INFORMATION);
-            if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
+            else if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_WARNING);
             else salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
             salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
@@ -371,12 +370,9 @@ public class Retro {
                 salamanderDialog.setDialogTitle(title);
             if (!Utils.isEmpty(message))
                 salamanderDialog.setMessage(Utils.textToHtml(message));
-            salamanderDialog.setPositiveButtonClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (finish)
-                        ((Activity) context).finish();
-                }
+            salamanderDialog.setPositiveButtonClickListener(v -> {
+                if (finish)
+                    ((Activity) context).finish();
             });
             salamanderDialog.show();
         }
