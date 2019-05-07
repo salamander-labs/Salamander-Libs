@@ -361,12 +361,13 @@ public class Retro {
             String title = retroStatus.getTitle();
             String message = retroStatus.getMessage();
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
-            if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS)
+            salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
+            if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS) {
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_INFORMATION);
-            else if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
+                salamanderDialog.setAlign(SalamanderDialog.ALIGN_CENTER);
+            } else if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_WARNING);
             else salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
-            salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
             if (!Utils.isEmpty(title))
                 salamanderDialog.setDialogTitle(title);
             if (!Utils.isEmpty(message))
