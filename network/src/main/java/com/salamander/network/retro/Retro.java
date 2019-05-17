@@ -194,14 +194,6 @@ public class Retro {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        /*
-        CertificatePinner certificatePinner = new CertificatePinner.Builder()
-                .add("*.datascrip.co.id", "sha256/d6VGc/Yo2Q1rEQOfHNwksr7iVI9ul2vz74yuiQJRYYI=")
-                .add("*.datascrip.co.id", "sha256/nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=")
-                .add("*.datascrip.co.id", "sha256/r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E=")
-                .build();
-        */
-
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -211,7 +203,6 @@ public class Retro {
                         return response;
                     }
                 })
-                //.certificatePinner(certificatePinner)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
 
@@ -339,7 +330,6 @@ public class Retro {
 
             return builder.build();
         } catch (Exception e) {
-            //FileUtil.writeExceptionLog(context, App.class.getSimpleName() + " => getUnsafeOkHttpClient  => ", e);
             throw new RuntimeException(e);
         }
     }
@@ -360,12 +350,12 @@ public class Retro {
             String title = retroStatus.getTitle();
             String message = retroStatus.getMessage();
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
-            if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS)
+            if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS) {
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_INFORMATION);
-            else if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
+                salamanderDialog.setAlign(SalamanderDialog.ALIGN_CENTER);
+            } else if (retroStatus.getCode() == RetroStatus.STATUS_WARNING)
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_WARNING);
             else salamanderDialog.setDialogType(SalamanderDialog.DIALOG_ERROR);
-            salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
             if (!Utils.isEmpty(title))
                 salamanderDialog.setDialogTitle(title);
             if (!Utils.isEmpty(message))

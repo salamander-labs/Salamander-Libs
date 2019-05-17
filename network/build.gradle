@@ -42,10 +42,25 @@ android {
     }
 }
 
+configurations {
+    retrofit
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api project(':core')
+
     api 'com.squareup.retrofit2:retrofit:2.5.0'
     api 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     api 'com.google.code.gson:gson:2.8.2'
+
+    retrofit 'com.squareup.retrofit2:retrofit:2.5.0'
+    retrofit 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    retrofit 'com.google.code.gson:gson:2.8.2'
 }
+
+task copyLibs(type: Copy) {
+    from configurations.retrofit
+    into "libs"
+}
+build.dependsOn copyLibs
