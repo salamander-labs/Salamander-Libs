@@ -1,20 +1,4 @@
-apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'com.android.library'
-
-publish {
-
-    def groupProjectID = 'com.salamander'
-    def artifactProjectID = 'logger'
-    def publishVersionID = '0.0.1'
-
-    userOrg = 'salamander-labs'
-    repoName = 'salamander-libs'
-    groupId = groupProjectID
-    artifactId = artifactProjectID
-    publishVersion = publishVersionID
-    desc = 'Crash Logging'
-    website = 'https://github.com/salamander-labs/Salamander-Libs'
-}
 
 android {
     compileSdkVersion 28
@@ -23,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
-        versionName "0.0.1"
+        versionName "0.0.1-beta01"
     }
 
     buildTypes {
@@ -43,5 +27,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':network')
+    api 'com.salamander:network:0.0.1-beta01'
 }
+
+apply from: 'publish.gradle'

@@ -6,6 +6,5 @@
 /build
 /captures
 .externalNativeBuild
-libs/
 Salamander-Libs.zip
 src/main/res/drawable/

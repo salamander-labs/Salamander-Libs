@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import androidx.core.content.ContextCompat;
 import android.view.View;
+
+import androidx.core.content.ContextCompat;
 
 import com.salamander.core.widget.SalamanderDialog;
 import com.salamander.network.R;

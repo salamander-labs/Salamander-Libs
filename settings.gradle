@@ -1,1 +1,7 @@
-include ':app', ':core', ':network', ':calendar', ':location', ':logger', ':cropper'
+include ':app'
+//include ':cropper'
+//include ':calendar'
+//include ':core'
+include ':network'
+//include ':location'
+//include ':logger'

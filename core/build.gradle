@@ -1,20 +1,4 @@
-apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'com.android.library'
-
-publish {
-
-    def groupProjectID = 'com.salamander'
-    def artifactProjectID = 'core'
-    def publishVersionID = '0.0.1'
-
-    userOrg = 'salamander-labs'
-    repoName = 'salamander-libs'
-    groupId = groupProjectID
-    artifactId = artifactProjectID
-    publishVersion = publishVersionID
-    desc = 'Core Module'
-    website = 'https://github.com/salamander-labs/Salamander-Libs'
-}
 
 android {
     compileSdkVersion 28
@@ -46,7 +30,9 @@ repositories {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     api 'androidx.legacy:legacy-support-v4:1.0.0'
     api 'com.google.android.material:material:1.1.0-alpha06'
 }
+
+apply from: 'publish.gradle'

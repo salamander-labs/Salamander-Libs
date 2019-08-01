@@ -99,13 +99,17 @@ public class Retro {
     }
 
     public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
-        Utils.showLog(json);
-        json = getJSON(json);
+        if (!Utils.isEmpty(json)) {
+            Utils.showLog(json);
+            json = getJSON(json);
+        }
         if (Utils.isEmpty(json)) {
             try {
+                if (response == null)
+                    return new RetroStatus(false, "Error","No Response from Server");
                 ResponseBody errorBody = getErrorBody(response);
                 String errorMsg = errorBody.string();
-                if (response != null && response.code() != 200)
+                if (response.code() != 200)
                     return new RetroStatus(false, response.code() + " - " + response.message(), Utils.isEmpty(errorMsg) ? "No Response from Server" : errorMsg, "");
                 return new RetroStatus(false, "Error.", errorMsg);
             } catch (Exception e) {

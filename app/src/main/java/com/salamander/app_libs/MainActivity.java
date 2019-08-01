@@ -39,23 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         tx_test.setText("0");
         tx_test2.setText("0");
-/*
-        tx_test2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && tx_test2.getText().toString().trim().equals("0"))
-                    tx_test2.setText("");
-            }
-        });
 
-        String json = "{\"nama\":\"benny\",\"nomor\":\"11\"}";
-        JSONObject jsonObject = JSON.toJSONObject(json);
-        try {
-            String umur = jsonObject.getString("umur");
-        } catch (Exception exception) {
-            Utils.showLog(exception);
-        }
-*/
         new DownloadCertificate(this, new DownloadCertificate.PostDownload() {
             @Override
             public void downloadDone(String errorMessage) {

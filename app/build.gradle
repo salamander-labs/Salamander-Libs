@@ -20,13 +20,13 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':location')
-    implementation project(':calendar')
-    implementation project(':logger')
-    implementation project(':cropper')
+    //implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    //implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'com.salamander:location:0.0.1-beta01'
+    //implementation 'com.salamander:location:0.0.1'
+    //implementation project(':location')
 }
