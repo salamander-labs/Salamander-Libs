@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -99,17 +100,13 @@ public class Retro {
     }
 
     public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
-        if (!Utils.isEmpty(json)) {
-            Utils.showLog(json);
-            json = getJSON(json);
-        }
+        Utils.showLog(json);
+        json = getJSON(json);
         if (Utils.isEmpty(json)) {
             try {
-                if (response == null)
-                    return new RetroStatus(false, "Error","No Response from Server");
                 ResponseBody errorBody = getErrorBody(response);
                 String errorMsg = errorBody.string();
-                if (response.code() != 200)
+                if (response != null && response.code() != 200)
                     return new RetroStatus(false, response.code() + " - " + response.message(), Utils.isEmpty(errorMsg) ? "No Response from Server" : errorMsg, "");
                 return new RetroStatus(false, "Error.", errorMsg);
             } catch (Exception e) {
@@ -198,6 +195,14 @@ public class Retro {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        /*
+        CertificatePinner certificatePinner = new CertificatePinner.Builder()
+                .add("*.datascrip.co.id", "sha256/d6VGc/Yo2Q1rEQOfHNwksr7iVI9ul2vz74yuiQJRYYI=")
+                .add("*.datascrip.co.id", "sha256/nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=")
+                .add("*.datascrip.co.id", "sha256/r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E=")
+                .build();
+        */
+
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -207,6 +212,7 @@ public class Retro {
                         return response;
                     }
                 })
+                //.certificatePinner(certificatePinner)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
 
@@ -334,6 +340,7 @@ public class Retro {
 
             return builder.build();
         } catch (Exception e) {
+            //FileUtil.writeExceptionLog(context, App.class.getSimpleName() + " => getUnsafeOkHttpClient  => ", e);
             throw new RuntimeException(e);
         }
     }
@@ -354,6 +361,7 @@ public class Retro {
             String title = retroStatus.getTitle();
             String message = retroStatus.getMessage();
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
+            salamanderDialog.setAlign(SalamanderDialog.ALIGN_LEFT);
             if (retroStatus.getCode() == RetroStatus.STATUS_SUCCESS) {
                 salamanderDialog.setDialogType(SalamanderDialog.DIALOG_INFORMATION);
                 salamanderDialog.setAlign(SalamanderDialog.ALIGN_CENTER);
@@ -364,9 +372,12 @@ public class Retro {
                 salamanderDialog.setDialogTitle(title);
             if (!Utils.isEmpty(message))
                 salamanderDialog.setMessage(Utils.textToHtml(message));
-            salamanderDialog.setPositiveButtonClickListener(v -> {
-                if (finish)
-                    ((Activity) context).finish();
+            salamanderDialog.setPositiveButtonClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (finish)
+                        ((Activity) context).finish();
+                }
             });
             salamanderDialog.show();
         }
