@@ -3,9 +3,9 @@
     android:shape="oval">
 
     <size
-        android:width="30dp"
-        android:height="35dp" />
+        android:width="4dp"
+        android:height="4dp" />
 
-    <solid android:color="@color/info_cirle" />
+    <solid android:color="@color/blue_information" />
 
 </shape>

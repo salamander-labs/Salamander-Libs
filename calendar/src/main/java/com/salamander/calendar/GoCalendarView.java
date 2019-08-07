@@ -31,6 +31,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.salamander.calendar.fonts.Fonts;
 
 import java.text.DateFormatSymbols;
@@ -41,8 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-
-import androidx.core.content.ContextCompat;
 
 /**
  * The roboto calendar view
@@ -222,20 +222,21 @@ public class GoCalendarView extends LinearLayout {
         Typeface robotoTypeface = Fonts.obtaintTypefaceFromString(context, font);
         int color = dayOfMonthColor;
         TextView dayOfMonthText, dayOfMonthJmlOrder;
-        ImageView dayOfMonthImage;
+        ImageView imgUnReadOrder;
         ViewGroup dayOfMonthContainer;
 
         for (int i = 1; i < 43; i++) {
 
             dayOfMonthContainer = view.findViewWithTag("dayOfMonthContainer" + i);
             dayOfMonthText = view.findViewWithTag("dayOfMonthText" + i);
-            dayOfMonthImage = view.findViewWithTag("dayOfMonthImage" + i);
+            //dayOfMonthImage = view.findViewWithTag("dayOfMonthImage" + i);
             dayOfMonthJmlOrder = view.findViewWithTag("dayOfMonthJmlOrder" + i);
+            imgUnReadOrder = view.findViewWithTag("imgUnReadOrder" + i);
 
+            imgUnReadOrder.setVisibility(View.GONE);
+            dayOfMonthJmlOrder.setVisibility(View.GONE);
             dayOfMonthText.setVisibility(View.INVISIBLE);
-            dayOfMonthImage.setVisibility(View.INVISIBLE);
-            //layoutDayOfMonthImage.setVisibility(View.INVISIBLE);
-            dayOfMonthJmlOrder.setVisibility(View.INVISIBLE);
+            //dayOfMonthImage.setVisibility(View.INVISIBLE);
 
             // Apply styles
             dayOfMonthText.setTypeface(robotoTypeface);
@@ -317,6 +318,13 @@ public class GoCalendarView extends LinearLayout {
         int currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
         ImageView dayOfMonth = view.findViewWithTag("dayOfMonthImage" + (currentDay + monthOffset));
         return dayOfMonth;
+    }
+
+    private ImageView getImgUnReadOrder(Calendar currentCalendar) {
+        int monthOffset = getMonthOffset(currentCalendar);
+        int currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
+        ImageView imgUnReadOrder = view.findViewWithTag("imgUnReadOrder" + (currentDay + monthOffset));
+        return imgUnReadOrder;
     }
 
     private TextView getDayOfMonthJmlOrder(Calendar currentCalendar) {
@@ -462,16 +470,21 @@ public class GoCalendarView extends LinearLayout {
         Locale locale = context.getResources().getConfiguration().locale;
         Calendar currentCalendar = Calendar.getInstance(locale);
         currentCalendar.setTime(currentDate);
-        ImageView dayOfMonthImage = getDayOfMonthImage(currentCalendar);
+        //ImageView dayOfMonthImage = getDayOfMonthImage(currentCalendar);
         TextView dayOfMonthText = getDayOfMonthText(currentCalendar);
         TextView dayOfMonthCount = getDayOfMonthJmlOrder(currentCalendar);
 
         // Draw day with style
-        dayOfMonthImage.setVisibility(View.VISIBLE);
+        //dayOfMonthImage.setVisibility(View.VISIBLE);
         dayOfMonthCount.setVisibility(View.VISIBLE);
         dayOfMonthCount.setText(String.valueOf(count));
-        dayOfMonthImage.setImageDrawable(null);
-        dayOfMonthImage.setBackgroundResource(style);
+        //LinearLayout linearLayout = getLLDayOfMonthJmlOrder(currentCalendar);
+        if (count == 0)
+            dayOfMonthCount.setVisibility(GONE);
+        else dayOfMonthCount.setVisibility(VISIBLE);
+
+        //dayOfMonthImage.setImageDrawable(null);
+        //dayOfMonthImage.setBackgroundResource(style);
         //dayOfMonthText.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/treb_bold.ttf"));
     }
 
@@ -486,7 +499,7 @@ public class GoCalendarView extends LinearLayout {
     }
 
     public void markMultipleDays(ArrayList<String> dates) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         HashMap<String, Integer> maps = new HashMap<>();
         for (String temp : dates) {
             Integer count = maps.get(temp);
@@ -505,8 +518,37 @@ public class GoCalendarView extends LinearLayout {
         }
     }
 
+    public void markUnread(ArrayList<String> dates) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        HashMap<String, Integer> maps = new HashMap<>();
+        for (String temp : dates) {
+            Integer count = maps.get(temp);
+            maps.put(temp, (count == null) ? 1 : count + 1);
+        }
+        for (HashMap.Entry<String, Integer> entry : maps.entrySet()) {
+            try {
+                String date = entry.getKey();
+                int count = entry.getValue();
+                if (count > 0)
+                    markUnreadWithStyle(format.parse(date));
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void markUnreadWithStyle(Date currentDate) {
+        Locale locale = context.getResources().getConfiguration().locale;
+        Calendar currentCalendar = Calendar.getInstance(locale);
+        currentCalendar.setTime(currentDate);
+        ImageView imgUnReadOrder = getImgUnReadOrder(currentCalendar);
+
+        imgUnReadOrder.setVisibility(VISIBLE);
+    }
+
     public void markHolidays(ArrayList<String> dates) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         HashMap<String, Integer> maps = new HashMap<>();
         for (String temp : dates) {
             Integer count = maps.get(temp);

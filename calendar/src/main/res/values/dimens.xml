@@ -20,7 +20,7 @@
     <dimen name="dayOfMonthMinHeight">0dp</dimen>
     <dimen name="dayOfMonthPaddingBottom">0dp</dimen>
     <dimen name="dayOfMonthImageSize">4dp</dimen>
-    <dimen name="dayOfMonthImageMarginTop">28dp</dimen>
+    <dimen name="dayOfMonthImageMarginTop">24dp</dimen>
 
     <dimen name="three_grid_unit">24dp</dimen>
     <dimen name="one_and_a_half_grid_unit">12dp</dimen>

@@ -8,6 +8,335 @@
     android:tag="weekRow3"
     android:weightSum="7">
 
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer15">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder15" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText15"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder15"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer16">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder16" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText16"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder16"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer17">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder17" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText17"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText17"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder17"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer18">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder18" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText18"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText18"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder18"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer19">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder19" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText19"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText19"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder19"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer20">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder20" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText20"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText20"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder20"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="3dp"
+        android:tag="dayOfMonthContainer21">
+
+        <ImageView
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/circle_red"
+            android:tag="imgUnReadOrder21" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:id="@+id/dayOfMonthText21"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="@dimen/dayOfMonthMinWidth"
+            android:minHeight="@dimen/dayOfMonthMinHeight"
+            android:paddingBottom="@dimen/dayOfMonthPaddingBottom"
+            android:tag="dayOfMonthText21"
+            android:text="1"
+            android:textColor="@color/holiday"
+            android:textSize="@dimen/dayOfMonthTextSize" />
+
+        <com.salamander.calendar.fonts.GoTextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/circle_blue"
+            android:gravity="center"
+            android:tag="dayOfMonthJmlOrder21"
+            android:text="1"
+            android:textColor="#ffffff"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+    <!--
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -37,24 +366,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage15">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage15" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder15"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -82,31 +408,27 @@
             android:text="16"
             android:textSize="@dimen/dayOfMonthTextSize" />
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage16">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage16" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder16"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -140,24 +462,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage17">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage17" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder17"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -192,24 +511,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage18">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage18" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder18"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -243,24 +559,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage19">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage19" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder19"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -288,31 +601,27 @@
             android:text="20"
             android:textSize="@dimen/dayOfMonthTextSize" />
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage20">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage20" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder20"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -347,27 +656,24 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dayOfMonthImageMarginTop"
             android:orientation="horizontal"
+            android:paddingTop="8dp"
             android:tag="layoutDayOfMonthImage21">
 
-            <ImageView
-                android:layout_width="@dimen/dayOfMonthImageSize"
-                android:layout_height="@dimen/dayOfMonthImageSize"
-                android:layout_gravity="center"
-                android:src="@drawable/circle_blue"
-                android:tag="dayOfMonthImage21" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.salamander.calendar.fonts.GoTextView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/circle_blue"
+                android:gravity="center"
                 android:tag="dayOfMonthJmlOrder21"
                 android:text="1"
-                android:textColor="@color/jml_kegiatan"
-                android:textSize="12sp" />
+                android:textColor="#ffffff"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
     </RelativeLayout>
-
+-->
 </LinearLayout>
