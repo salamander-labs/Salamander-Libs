@@ -3,7 +3,6 @@ package com.salamander.location;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -14,10 +13,12 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -34,7 +35,6 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.salamander.core.Utils;
 
 import java.util.Iterator;
 
@@ -44,8 +44,8 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
 
     protected static final int REQ_CHECK_GPS = 1111;
     protected static final int ACCESS_FINE_LOCATION_INTENT_ID = 2222;
-    protected static final String BROADCAST_ACTION = "android.location.PROVIDERS_CHANGED";
 
+    protected AppCompatActivity activity;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private PendingIntent mRequestLocationUpdatesPendingIntent;
@@ -56,13 +56,12 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
+        JobIntentServiceBlackListApp.enqueue(getApplicationContext());
         initGoogleAPIClient();
-        checkLocationPermissions(new OnLocationPermissionGranted() {
-            @Override
-            public void onLocationPermissionGranted(boolean isPermissionGranted) {
-                if (isPermissionGranted)
-                    checkGPS();
-            }
+        checkLocationPermissions(isPermissionGranted -> {
+            if (isPermissionGranted)
+                checkGPS();
         });
     }
 
@@ -83,7 +82,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
                 LocationInfo mPrevLocation = SalamanderLocation.getLastLocation(LocationActivity.this);
 
                 if (mCurrentLocation.getLatitude() != mPrevLocation.getLatitude() || mCurrentLocation.getLongitude() != mPrevLocation.getLongitude())
-                    Utils.showLog("Location Received\nLatitude : " + String.valueOf(mCurrentLocation.getLatitude()) + "\nLongitude : " + String.valueOf(mCurrentLocation.getLongitude()) + "\nMock Location : " + ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && mCurrentLocation.isFromMockProvider()) ? "true" : "false"));
+                    Log.d("Location Received", "Latitude : " + mCurrentLocation.getLatitude() + ", Longitude : " + mCurrentLocation.getLongitude() + ", Mock Location : " + ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && mCurrentLocation.isFromMockProvider()) ? "true" : "false"));
 
                 if (mCurrentLocation != null) {
                     SalamanderLocation.getLocationManager(LocationActivity.this).setLocation(mCurrentLocation);
@@ -205,12 +204,7 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
             return true;
         } else {
             Dialog errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(this, result, 8964,
-                    new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            finish();
-                        }
-                    });
+                    dialog -> finish());
             if (errorDialog != null) {
                 errorDialog.show();
             } else {
@@ -284,22 +278,23 @@ public class LocationActivity extends AppCompatActivity implements GoogleApiClie
         }
     }
 
-
     @Override
     public void onGpsStatusChanged(int event) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            GpsStatus gpsStatus = locationManager.getGpsStatus(null);
-            String strGpsStats = "";
-            if (gpsStatus != null) {
-                Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
-                Iterator<GpsSatellite> sat = satellites.iterator();
-                int i = 0;
-                while (sat.hasNext()) {
-                    GpsSatellite satellite = sat.next();
-                    strGpsStats += (i++) + ": " + satellite.getPrn() + "," + satellite.usedInFix() + "," + satellite.getSnr() + "," + satellite.getAzimuth() + "," + satellite.getElevation() + "\n\n";
+            if (locationManager != null) {
+                GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+                String strGpsStats = "";
+                if (gpsStatus != null) {
+                    Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+                    Iterator<GpsSatellite> sat = satellites.iterator();
+                    int i = 0;
+                    while (sat.hasNext()) {
+                        GpsSatellite satellite = sat.next();
+                        strGpsStats += (i++) + ": " + satellite.getPrn() + "," + satellite.usedInFix() + "," + satellite.getSnr() + "," + satellite.getAzimuth() + "," + satellite.getElevation() + "\n\n";
+                    }
+                    //Toast.makeText(this, strGpsStats, Toast.LENGTH_SHORT).show();
                 }
-                //Toast.makeText(this, strGpsStats, Toast.LENGTH_SHORT).show();
             }
         }
     }

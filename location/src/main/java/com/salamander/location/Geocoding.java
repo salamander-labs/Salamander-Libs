@@ -1,7 +1,7 @@
 package com.salamander.location;
 
 import android.content.Context;
-import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.widget.Toast;
 
@@ -14,10 +14,8 @@ import com.salamander.network.retro.RetroStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.nlopez.smartlocation.OnReverseGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -41,20 +39,20 @@ public class Geocoding {
         Location location = new Location("");
         location.setLatitude(latitude);
         location.setLongitude(longitude);
-        if (location.getLatitude() >= -90 && location.getLatitude() <= 90 && location.getLongitude() >= -180 && location.getLatitude() <= 180)
-            SmartLocation.with(context).geocoding().reverse(location, new OnReverseGeocodingListener() {
-                @Override
-                public void onAddressResolved(Location location, List<Address> list) {
+        if (location.getLatitude() >= -90 && location.getLatitude() <= 90 && location.getLongitude() >= -180 && location.getLatitude() <= 180) {
+            if (Geocoder.isPresent())
+                SmartLocation.with(context).geocoding().reverse(location, (location1, list) -> {
                     if (list.size() > 0) {
                         RetroStatus retroStatus = new RetroStatus();
                         retroStatus.setSuccess(true);
                         retroStatus.setMessage(list.get(0).getAddressLine(0));
                         onCB.onCB(retroStatus);
-                    } //else
-                        //getGeocodingFromGoogleAPI(context, latitude, longitude, apiKey, onCB);
-                }
-            });
-        else
+                    } else
+                        getGeocodingFromGoogleAPI(context, latitude, longitude, apiKey, onCB);
+                });
+            else
+                getGeocodingFromGoogleAPI(context, latitude, longitude, apiKey, onCB);
+        } else
             Toast.makeText(context, "Latitude : " + String.valueOf(location.getLatitude()) + "\n Longitude : " + String.valueOf(location.getLongitude() + "\n is not a valid location."), Toast.LENGTH_SHORT).show();
     }
 

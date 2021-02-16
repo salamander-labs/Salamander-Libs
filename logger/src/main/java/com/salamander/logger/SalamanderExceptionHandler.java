@@ -8,18 +8,15 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
-import com.salamander.core.BuildConfig;
+import androidx.core.content.pm.PackageInfoCompat;
+
 import com.salamander.core.Salamander;
 import com.salamander.core.Utils;
-import com.salamander.core.object.Tanggal;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Date;
-
-import androidx.core.content.pm.PackageInfoCompat;
 
 public class SalamanderExceptionHandler implements Thread.UncaughtExceptionHandler {
 
@@ -67,7 +64,7 @@ public class SalamanderExceptionHandler implements Thread.UncaughtExceptionHandl
         for (StackTraceElement stackTraceElement : stackTraceElementList) {
             if (stackTraceElement.toString().contains(packageName) || (stackTraceElement.toString().contains(packageName2)) &&
                     !stackTraceElement.toString().contains("<init>") &&
-                    !stackTraceElement.getClassName().contains(BuildConfig.APPLICATION_ID) &&
+                    //!stackTraceElement.getClassName().contains(BuildConfig.APPLICATION_ID) &&
                     !stackTraceElement.isNativeMethod()) {
 
                 errorLog.setClassName(stackTraceElement.getClassName());
@@ -75,7 +72,7 @@ public class SalamanderExceptionHandler implements Thread.UncaughtExceptionHandl
                 errorLog.setLineNumber(stackTraceElement.getLineNumber());
                 errorLog.setException(throwable.getClass().getSimpleName());
                 errorLog.setMessage((throwable.getCause() != null ? throwable.getCause().getLocalizedMessage() : throwable.getLocalizedMessage()));
-                errorLog.setErrorDate(new Tanggal(new Date()));
+                errorLog.setErrorDate(System.currentTimeMillis());
                 errorLog.setLogCat(LogUtils.readLogs());
 
                 new LogSQLite(context).Post(errorLog);
@@ -116,9 +113,7 @@ public class SalamanderExceptionHandler implements Thread.UncaughtExceptionHandl
         try {
             // For Android 4.0 and earlier, you will get all app's log output, so filter it to
             // mostly limit it to your app's output.  In later versions, the filtering isn't needed.
-            String cmd = (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) ?
-                    "logcat -d -e time MyApp:v dalvikvm:v System.err:v *:s" :
-                    "logcat -d -e time";
+            String cmd = "logcat -d -e time";
 
             // get input stream
             Process process = Runtime.getRuntime().exec(cmd);

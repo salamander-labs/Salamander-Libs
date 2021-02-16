@@ -5,6 +5,7 @@ import android.content.Context;
 import com.salamander.core.SalamanderProgressDialog;
 import com.salamander.core.Utils;
 import com.salamander.network.JSON;
+import com.salamander.network.utils.ConnectionUtils;
 
 import org.json.JSONObject;
 
@@ -94,6 +95,8 @@ public class RetroResp {
             retroData.setHeader(response.raw().toString());
             retroData.setURL(response.raw().request().url().toString());
             retroData.setStatus(response.raw().message());
+            retroData.setRequestTimeMilis(response.raw().sentRequestAtMillis());
+            retroData.setReceiveTimeMilis(response.raw().receivedResponseAtMillis());
             RetroStatus status = Retro.getRetroStatus(responseBody, retroData.getResult());
             retroData.setRetroStatus(status);
 
@@ -123,7 +126,7 @@ public class RetroResp {
             }
 
             RetroStatus status = Retro.getRetroStatus(null, throwable.getMessage());
-            if (!Retro.isConnected(context))
+            if (!ConnectionUtils.isConnected(context))
                 status.setMessage("Tidak terkoneksi ke internet.\nSilakan cek koneksi anda dan coba lagi.");
             retroData.setHeader(throwable.getClass().getSimpleName());
             retroData.setRetroStatus(status);

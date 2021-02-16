@@ -6,7 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.salamander.core.Utils;
-import com.salamander.core.object.Tanggal;
+import com.salamander.core.utils.DateUtils;
 
 import org.json.JSONObject;
 
@@ -28,7 +28,7 @@ public class ErrorLog implements Parcelable {
 
     private int ID = 0, LineNumber = 0;
     private String ClassName, MethodName, Message, LogCat, LogCatFile, Exception;
-    private Tanggal ErrorDate;
+    private long ErrorDate;
 
     public ErrorLog() {}
 
@@ -38,9 +38,10 @@ public class ErrorLog implements Parcelable {
         ClassName = in.readString();
         MethodName = in.readString();
         Message = in.readString();
+        LogCat = in.readString();
         LogCatFile = in.readString();
         Exception = in.readString();
-        ErrorDate = in.readParcelable(Tanggal.class.getClassLoader());
+        ErrorDate = in.readLong();
     }
 
     @Override
@@ -50,9 +51,10 @@ public class ErrorLog implements Parcelable {
         dest.writeString(ClassName);
         dest.writeString(MethodName);
         dest.writeString(Message);
+        dest.writeString(LogCat);
         dest.writeString(LogCatFile);
         dest.writeString(Exception);
-        dest.writeParcelable(ErrorDate, flags);
+        dest.writeLong(ErrorDate);
     }
 
     @Override
@@ -112,11 +114,11 @@ public class ErrorLog implements Parcelable {
         Message = message;
     }
 
-    public Tanggal getErrorDate() {
+    public long getErrorDate() {
         return ErrorDate;
     }
 
-    public void setErrorDate(Tanggal errorDate) {
+    public void setErrorDate(long errorDate) {
         ErrorDate = errorDate;
     }
 
@@ -149,7 +151,7 @@ public class ErrorLog implements Parcelable {
             jsonObject.put(ERROR_EXCEPTION, Exception);
             jsonObject.put(ERROR_MESSAGE, Message);
             jsonObject.put(ERROR_LOGCAT, LogCat);
-            jsonObject.put(ERROR_TANGGAL, ErrorDate.getTglString());
+            jsonObject.put(ERROR_TANGGAL, DateUtils.format(DateUtils.FORMAT_DATETIME_FULL, ErrorDate));
             jsonObject.put(ErrorLog.ERROR_PACKAGE_NAME, context.getApplicationContext().getPackageName());
         } catch (Exception e) {
             Utils.showLog(e);

@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "0.0.1"
+        minSdkVersion 18
+        targetSdkVersion 29
+        versionCode 21021613
+        versionName "0.0.3-beta01"
     }
 
     buildTypes {
@@ -27,7 +27,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.salamander:core:0.0.1'
+    api project(path: ':core')
 }
 
 apply from: 'publish.gradle'

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.salamander.core.object.Tanggal;
 import com.salamander.core.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -67,7 +66,7 @@ public class LogSQLite {
         contentValues.put(ErrorLog.ERROR_EXCEPTION, errorLog.getException());
         contentValues.put(ErrorLog.ERROR_LOGCAT, errorLog.getLogCat());
         contentValues.put(ErrorLog.ERROR_MESSAGE, errorLog.getMessage());
-        contentValues.put(ErrorLog.ERROR_TANGGAL, errorLog.getErrorDate().getTglString());
+        contentValues.put(ErrorLog.ERROR_TANGGAL, DateUtils.format(DateUtils.FORMAT_DATETIME_FULL, errorLog.getErrorDate()));
         return contentValues;
     }
 
@@ -79,7 +78,7 @@ public class LogSQLite {
         errorLog.setException(cursor.getString(cursor.getColumnIndex(ErrorLog.ERROR_EXCEPTION)));
         errorLog.setLogCat(cursor.getString(cursor.getColumnIndex(ErrorLog.ERROR_LOGCAT)));
         errorLog.setMessage(cursor.getString(cursor.getColumnIndex(ErrorLog.ERROR_MESSAGE)));
-        errorLog.setErrorDate(new Tanggal(DateUtils.stringToDate(Tanggal.FORMAT_DATETIME_FULL, cursor.getString(cursor.getColumnIndex(ErrorLog.ERROR_TANGGAL)))));
+        errorLog.setErrorDate(DateUtils.toLong(DateUtils.FORMAT_DATETIME_FULL, cursor.getString(cursor.getColumnIndex(ErrorLog.ERROR_TANGGAL))));
         return errorLog;
     }
 }

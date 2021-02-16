@@ -54,7 +54,7 @@ public class CurrencyUtils {
             if (s.toString().startsWith("0" + decimalSeparator))
                 price = s.toString();
             else
-                price = formatNumber(Double.valueOf(s.toString().replaceAll(groupingSeparator, "")));
+                price = formatNumber(Double.parseDouble(s.toString().replaceAll(groupingSeparator, "")));
 
             start = e.getText().length();
             cp = e.getSelectionStart();

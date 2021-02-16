@@ -2,17 +2,12 @@ package com.salamander.network.retro;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import com.salamander.core.Utils;
 import com.salamander.core.widget.SalamanderDialog;
 import com.salamander.network.gson.GsonConverterFactory;
-import com.salamander.network.utils.CertUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,22 +16,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
-
-import okhttp3.Interceptor;
+import okhttp3.ConnectionSpec;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -91,12 +76,16 @@ public class Retro {
     }
 
     private static String getJSON(String response) {
-        Pattern pattern = Pattern.compile("((?s)<div(.*)div>)((?s).*)", Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(response);
-        String result = response;
-        if (matcher.find())
-            result = matcher.group(1);
-        return result;
+        try {
+            Pattern pattern = Pattern.compile("((?s)<div(.*)div>)((?s).*)", Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(response);
+            String result = response;
+            if (matcher.find())
+                result = matcher.group(1);
+            return result;
+        } catch (Exception e) {
+            return response;
+        }
     }
 
     public static RetroStatus getRetroStatus(Response<ResponseBody> response, String json) {
@@ -187,39 +176,23 @@ public class Retro {
 
     @NonNull
     public static RequestBody createPartFromString(String description) {
-        return RequestBody.create(MediaType.parse("multipart/form-data"), description);
+        return RequestBody.create(description, MediaType.parse("multipart/form-data"));
     }
 
 
-    public static Retrofit createRetrofit(Context context, String URL) {
+    public static Retrofit createRetrofit(String URL) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        /*
-        CertificatePinner certificatePinner = new CertificatePinner.Builder()
-                .add("*.datascrip.co.id", "sha256/d6VGc/Yo2Q1rEQOfHNwksr7iVI9ul2vz74yuiQJRYYI=")
-                .add("*.datascrip.co.id", "sha256/nKWcsYrc+y5I8vLf1VGByjbt+Hnasjl+9h8lNKJytoE=")
-                .add("*.datascrip.co.id", "sha256/r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E=")
-                .build();
-        */
-
         OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-                        okhttp3.Response response = chain.proceed(request);
-                        return response;
-                    }
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    okhttp3.Response response = chain.proceed(request);
+                    return response;
                 })
-                //.certificatePinner(certificatePinner)
+                .connectionSpecs(Collections.singletonList(ConnectionSpec.COMPATIBLE_TLS))
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
-
-        SSLContext sslContext = getSSLConfig(context);
-        TrustManager[] trustManagers = getTrustManager(context);
-        if (sslContext != null && trustManagers != null && trustManagers.length > 0)
-            client.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
 
         return new Retrofit.Builder()
                 .baseUrl(URL)
@@ -227,25 +200,18 @@ public class Retro {
                 .build();
     }
 
-    public static Retrofit createRetrofit(Context context, String URL, GsonConverterFactory gsonConverterFactory) {
+    public static Retrofit createRetrofit(String URL, GsonConverterFactory gsonConverterFactory) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-                        okhttp3.Response response = chain.proceed(request);
-                        return response;
-                    }
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    okhttp3.Response response = chain.proceed(request);
+                    return response;
                 })
+                .connectionSpecs(Collections.singletonList(ConnectionSpec.COMPATIBLE_TLS))
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES);
-
-        SSLContext sslContext = getSSLConfig(context);
-        TrustManager[] trustManagers = getTrustManager(context);
-        if (sslContext != null && trustManagers != null && trustManagers.length > 0)
-            client.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
 
         return new Retrofit.Builder()
                 .baseUrl(URL)
@@ -254,110 +220,12 @@ public class Retro {
                 .build();
     }
 
-    public static SSLContext getSSLConfig(Context context) { // throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        SSLContext sslContext = null;
-        try {
-            // Creating an SSLSocketFactory that uses our TrustManager
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, getTrustManager(context), null);
-        } catch (Exception e) {
-            Log.d("getSSLConfig", "getSSLConfig([context])  => " + e.toString());
-        }
-        return sslContext;
-    }
-
-    @SuppressWarnings("TryFinallyCanBeTryWithResources")
-    private static TrustManager[] getTrustManager(Context context) {
-        TrustManagerFactory trustManagerFactory;
-        try {
-            // Loading CAs from an InputStream
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            Certificate ca;
-            //InputStream cert = new FileInputStream(CertUtil.getCertificate(context));
-            InputStream cert = CertUtil.stringToStream(CertUtil.getCertificateText(context));
-            try {
-                ca = cf.generateCertificate(cert);
-            } finally {
-                cert.close();
-            }
-
-            // Creating a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-
-            // Creating a TrustManager that trusts the CAs in our KeyStore.
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            trustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm);
-            trustManagerFactory.init(keyStore);
-            return trustManagerFactory.getTrustManagers();
-        } catch (Exception e) {
-            Log.d("getSSLConfig", "getSSLConfig([context])  => " + e.toString());
-        }
-        return null;
-    }
-
-    private static OkHttpClient getUnsafeOkHttpClient() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        try {
-            // Create a trust manager that does not validate certificate chains
-            final TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
-                        }
-
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
-                        }
-
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-            };
-            // Install the all-trusting trust manager
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-
-            builder.connectTimeout(30, TimeUnit.SECONDS);
-            builder.readTimeout(2, TimeUnit.MINUTES);
-            builder.addInterceptor(interceptor);
-
-            return builder.build();
-        } catch (Exception e) {
-            //FileUtil.writeExceptionLog(context, App.class.getSimpleName() + " => getUnsafeOkHttpClient  => ", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static boolean isConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert cm != null;
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
     public static void showRetroDialog(final Context context, RetroStatus retroStatus) {
         showRetroDialog(context, retroStatus, false);
     }
 
     public static void showRetroDialog(final Context context, RetroStatus retroStatus, final boolean finish) {
-        if (retroStatus != null) {
+        if (retroStatus != null && context != null) {
             String title = retroStatus.getTitle();
             String message = retroStatus.getMessage();
             final SalamanderDialog salamanderDialog = new SalamanderDialog(context);
@@ -372,12 +240,9 @@ public class Retro {
                 salamanderDialog.setDialogTitle(title);
             if (!Utils.isEmpty(message))
                 salamanderDialog.setMessage(Utils.textToHtml(message));
-            salamanderDialog.setPositiveButtonClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (finish)
-                        ((Activity) context).finish();
-                }
+            salamanderDialog.setPositiveButtonClickListener(v -> {
+                if (finish)
+                    ((Activity) context).finish();
             });
             salamanderDialog.show();
         }

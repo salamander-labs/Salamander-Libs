@@ -15,7 +15,7 @@ public class Utils {
     public static void hideKeyboard(Activity activity) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            if (activity.getCurrentFocus() != null)
+            if (inputMethodManager != null && activity.getCurrentFocus() != null)
                 inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         } catch (Exception e) {
             Utils.showLog(e);
@@ -26,7 +26,8 @@ public class Utils {
         try {
             view.requestFocus();
             InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (inputMethodManager != null)
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         } catch (Exception e) {
             Utils.showLog(e);
         }
@@ -65,7 +66,7 @@ public class Utils {
         for (StackTraceElement stackTraceElement : stackTraceElementList) {
             if (stackTraceElement.toString().contains(packageName) &&
                     !stackTraceElement.toString().contains("<init>") &&
-                    !stackTraceElement.getClassName().contains(BuildConfig.APPLICATION_ID) &&
+                    !stackTraceElement.getClassName().contains(BuildConfig.LIBRARY_PACKAGE_NAME) &&
                     !stackTraceElement.isNativeMethod()) {
                 Log.e(Salamander.getInstance().getTAG(),
                         "=>\n==============================================================================================================================================" +
@@ -92,7 +93,7 @@ public class Utils {
         for (StackTraceElement stackTraceElement : stackTraceElementList) {
             if (stackTraceElement.toString().contains(packageName) &&
                     !stackTraceElement.toString().contains("<init>") &&
-                    !stackTraceElement.getClassName().contains(BuildConfig.APPLICATION_ID) &&
+                    !stackTraceElement.getClassName().contains(BuildConfig.LIBRARY_PACKAGE_NAME) &&
                     !stackTraceElement.isNativeMethod()) {
                 Log.e(Salamander.getInstance().getTAG(),
                         "=>\n==============================================================================================================================================" +

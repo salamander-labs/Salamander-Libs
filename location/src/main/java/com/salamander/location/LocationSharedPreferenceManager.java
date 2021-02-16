@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class LocationSharedPreferenceManager {
 
@@ -32,6 +33,7 @@ public class LocationSharedPreferenceManager {
     private String LAST_MOCK_POSITION_PROVIDER = "";
 
     private String LIST_BLACKLIST_APK = "";
+    private String LAST_UPDATE_BLACKLIST_APK = "";
 
     public LocationSharedPreferenceManager(Context context) {
         this.context = context;
@@ -56,27 +58,23 @@ public class LocationSharedPreferenceManager {
     public void setListBlacklistApp(JSONArray jsonArray) {
         editor = spf.edit();
         editor.putString(LIST_BLACKLIST_APK, jsonArray.toString());
+        editor.putLong(LAST_UPDATE_BLACKLIST_APK, new Date().getTime());
         editor.apply();
     }
 
-    public void setListBlacklistApp(ArrayList<String> list_blacklist_app) {
-        JSONArray jsonArray = new JSONArray();
-        for (String apk_name : list_blacklist_app) {
-            jsonArray.put(apk_name);
-        }
-        setListBlacklistApp(jsonArray);
+    public Date getLastUpdateBlacklistApp() {
+        return new Date(spf.getLong(LAST_UPDATE_BLACKLIST_APK, 0));
     }
 
     public ArrayList<String> getListBlacklistApp() {
         ArrayList<String> list_blacklist_app = new ArrayList<>();
-        String spfString = spf.getString(SPF_NAME, "");
+        String spfString = spf.getString(LIST_BLACKLIST_APK, "[]");
         try {
             JSONArray jsonArray = new JSONArray(spfString);
-            for (int i=0; i < jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 list_blacklist_app.add(jsonArray.getString(i));
             }
         } catch (JSONException e) {
-            //Log.e("getListBlacklistApp", spfString + " => " + e.toString());
             Utils.showLog(e);
         }
         return list_blacklist_app;
@@ -136,5 +134,4 @@ public class LocationSharedPreferenceManager {
     private double getDouble(final String key, final double defaultValue) {
         return Double.longBitsToDouble(spf.getLong(key, Double.doubleToLongBits(defaultValue)));
     }
-
 }

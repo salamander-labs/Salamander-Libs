@@ -112,13 +112,10 @@ public class SalamanderDialog extends Dialog {
     }
 
     public SalamanderDialog setPositiveButtonClickListener(final View.OnClickListener onClickListener) {
-        bt_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onClickListener != null)
-                    onClickListener.onClick(view);
-                dismiss();
-            }
+        bt_ok.setOnClickListener(view -> {
+            if (onClickListener != null)
+                onClickListener.onClick(view);
+            dismiss();
         });
         return this;
     }
@@ -141,13 +138,10 @@ public class SalamanderDialog extends Dialog {
             bt_cancel.setBackground(null);
             bt_ok.setBackground(ContextCompat.getDrawable(context, R.drawable.button_positive_selector));
             bt_cancel.setBackground(ContextCompat.getDrawable(context, R.drawable.button_negative_selector));
-        bt_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onClickListener != null)
-                    onClickListener.onClick(view);
-                dismiss();
-            }
+        bt_cancel.setOnClickListener(view -> {
+            if (onClickListener != null)
+                onClickListener.onClick(view);
+            dismiss();
         });
         return this;
     }

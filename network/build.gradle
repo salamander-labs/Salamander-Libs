@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "0.0.1-beta01"
+        minSdkVersion 18
+        targetSdkVersion 29
+        versionCode 21021613
+        versionName "0.0.3-beta01"
         multiDexEnabled true
     }
 
@@ -28,12 +28,15 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'com.salamander:core:0.0.1'
-    api ('com.squareup.retrofit2:retrofit:2.5.0') {
+    api project(path: ':core')
+    //api 'com.salamander:core:0.0.2-beta02'
+    api 'androidx.preference:preference:1.1.1'
+    api('com.squareup.retrofit2:retrofit:2.9.0') {
         exclude group:'com.squareup.okhttp3', module:'logging-interceptor'
     }
-    api 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-    api 'com.google.code.gson:gson:2.8.2'
+    api 'com.squareup.okhttp3:okhttp:4.9.0'
+    api 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    api 'com.google.code.gson:gson:2.8.6'
 }
 
 apply from: 'publish.gradle'

@@ -33,12 +33,9 @@ public class SalamanderLocation {
     }
 
     public static ArrayList<String> getListFakeGPSApp(Context context) {
-        getListPackageWithMockPermission(context);
+        ArrayList<String> list_app = getListPackageWithMockPermission(context);
         List<AndroidProcess> processes = AndroidProcesses.getRunningProcesses();
-        ArrayList<String> list_app = new ArrayList<>();
-        ArrayList<String> list_app_running = new ArrayList<>();
         for (AndroidProcess process : processes) {
-            list_app_running.add(process.name);
             for (String packageName : SalamanderLocation.getLocationManager(context).getListBlacklistApp()) {
                 if (process.name.toLowerCase().contains(packageName)) {
                     list_app.add(process.name);
@@ -55,10 +52,10 @@ public class SalamanderLocation {
     }
 
     public static ArrayList<String> getListPackageWithMockPermission(Context context) {
-
         PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        assert manager != null;
         List<ActivityManager.RunningServiceInfo> processes = manager.getRunningServices(200);
         ArrayList<String> list_fake_gps_app = new ArrayList<>();
         for (ApplicationInfo applicationInfo : packages) {
@@ -81,7 +78,6 @@ public class SalamanderLocation {
                     }
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                //Log.e("ERROR->getPackageMock", e.toString());
                 Utils.showLog(e);
             }
         }
@@ -103,7 +99,8 @@ public class SalamanderLocation {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 AppOpsManager opsManager = (AppOpsManager) mContext.getSystemService(Context.APP_OPS_SERVICE);
-                //isMockLocation = (opsManager.checkOp(AppOpsManager.OPSTR_MOCK_LOCATION, android.os.Process.myUid(), android.support.compat.BuildConfig.APPLICATION_ID) == AppOpsManager.MODE_ALLOWED);
+                if (opsManager != null)
+                    isMockLocation = (opsManager.checkOp(AppOpsManager.OPSTR_MOCK_LOCATION, android.os.Process.myUid(), mContext.getApplicationContext().getPackageName()) == AppOpsManager.MODE_ALLOWED);
             } else {
                 isMockLocation = !android.provider.Settings.Secure.getString(mContext.getContentResolver(), "mock_location").equals("0");
             }
@@ -139,6 +136,6 @@ public class SalamanderLocation {
 
     public static boolean isGPSActive(Context context) {
         LocationManager locationManager = (LocationManager) (context.getSystemService(Context.LOCATION_SERVICE));
-            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 }

@@ -1,6 +1,6 @@
 package com.salamander.network;
 
-import com.salamander.core.Utils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,7 +14,9 @@ public class JSON {
                     return jsonObject.getString(Key).trim();
             }
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getStringOrNull -> " + e.toString() +
+                    " : \n" + " key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return null;
     }
@@ -26,7 +28,9 @@ public class JSON {
                     return jsonObject.getString(Key).trim();
             }
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getString -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return null;
     }
@@ -38,7 +42,10 @@ public class JSON {
                     return jsonObject.getString(Key).trim();
             }
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getString -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null") +
+                    "\n defaultValue : " + defaultValue);
         }
         return defaultValue;
     }
@@ -48,7 +55,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getInt(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getInt -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return 0;
     }
@@ -58,7 +67,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getDouble(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getDouble -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return 0;
     }
@@ -68,7 +79,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return Float.valueOf(String.valueOf(jsonObject.getDouble(Key)));
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getFloat -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return 0;
     }
@@ -78,7 +91,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getBoolean(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getBoolean -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return false;
     }
@@ -89,7 +104,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONObject(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getJSONObject -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n json : " + json);
         }
         return null;
     }
@@ -99,7 +116,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONObject(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getJSONObject -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return null;
     }
@@ -110,7 +129,9 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONArray(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getJSONArray -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n json : " + json);
         }
         return null;
     }
@@ -120,16 +141,29 @@ public class JSON {
             if (jsonObject.has(Key))
                 return jsonObject.getJSONArray(Key);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> getJSONArray -> " + e.toString() + " :\n" +
+                    "\n key : " + Key +
+                    "\n jsonObject : " + (jsonObject != null ? jsonObject.toString() : "null"));
         }
         return null;
+    }
+
+    public static JSONObject toJSONObject(String json, JSONObject defaultJSON) {
+        try {
+            return new JSONObject(json);
+        } catch (Exception e) {
+            Log.e(e.getClass().getSimpleName(), "JSON -> toJSONObject -> " + e.toString() + " :\n" +
+                    "\n json : " + json);
+        }
+        return defaultJSON;
     }
 
     public static JSONObject toJSONObject(String json) {
         try {
             return new JSONObject(json);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> toJSONObject -> " + e.toString() + " :\n" +
+                    "\n json : " + json);
         }
         return null;
     }
@@ -138,7 +172,8 @@ public class JSON {
         try {
             return new JSONArray(json);
         } catch (Exception e) {
-            Utils.showLog(e);
+            Log.e(e.getClass().getSimpleName(), "JSON -> toJSONArray -> " + e.toString() + " :\n" +
+                    "\n json : " + json);
         }
         return null;
     }

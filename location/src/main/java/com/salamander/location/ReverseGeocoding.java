@@ -1,6 +1,7 @@
 package com.salamander.location;
 
 import android.content.Context;
+import android.location.Geocoder;
 import android.location.Location;
 
 import com.salamander.core.Utils;
@@ -12,12 +13,9 @@ import com.salamander.network.retro.RetroStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.geocoding.utils.LocationAddress;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -39,17 +37,16 @@ public class ReverseGeocoding {
     public static final String UNKNOWN_ERROR = "UNKNOWN_ERROR";
 
     public static void getLocationFromAddress(final Context context, final String address, final String apiKey, final OnCB onCB) {
-        SmartLocation.with(context).geocoding().direct(address, new OnGeocodingListener() {
-            @Override
-            public void onLocationResolved(String s, List<LocationAddress> list) {
+        if (Geocoder.isPresent())
+            SmartLocation.with(context).geocoding().direct(address, (s, list) -> {
                 if (list.size() > 0) {
                     Location location = list.get(0).getLocation();
                     RetroStatus retroStatus = new RetroStatus();
                     retroStatus.setSuccess(true);
                     onCB.onCB(retroStatus, location);
                 } else getReverseGeocodingFromGoogleAPI(context, address, apiKey, onCB);
-            }
-        });
+            });
+        else getReverseGeocodingFromGoogleAPI(context, address, apiKey, onCB);
     }
 
     private static void getReverseGeocodingFromGoogleAPI(final Context context, final String address, final String apiKey, final OnCB onCB) {

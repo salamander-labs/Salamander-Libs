@@ -15,6 +15,7 @@ public class RetroData implements Parcelable {
     private String ActivityName, ClassName, MethodName, Parameter;
     private String Result, URL, Header, Status;
     private RetroStatus retroStatus = new RetroStatus();
+    private long requestTimeMilis, receiveTimeMilis;
     private ArrayList<com.salamander.network.retro.Parameter> Parameters = new ArrayList<>();
 
     public RetroData() {
@@ -31,6 +32,8 @@ public class RetroData implements Parcelable {
         Header = in.readString();
         Status = in.readString();
         retroStatus = in.readParcelable(RetroStatus.class.getClassLoader());
+        requestTimeMilis = in.readLong();
+        receiveTimeMilis = in.readLong();
         Parameters = in.createTypedArrayList(com.salamander.network.retro.Parameter.CREATOR);
     }
 
@@ -46,6 +49,8 @@ public class RetroData implements Parcelable {
         dest.writeString(Header);
         dest.writeString(Status);
         dest.writeParcelable(retroStatus, flags);
+        dest.writeLong(requestTimeMilis);
+        dest.writeLong(receiveTimeMilis);
         dest.writeTypedList(Parameters);
     }
 
@@ -168,5 +173,25 @@ public class RetroData implements Parcelable {
 
     public void setStatus(String status) {
         Status = status;
+    }
+
+    public long getReceiveTimeMilis() {
+        return receiveTimeMilis;
+    }
+
+    public void setReceiveTimeMilis(long receiveTimeMilis) {
+        this.receiveTimeMilis = receiveTimeMilis;
+    }
+
+    public long getRequestTimeMilis() {
+        return requestTimeMilis;
+    }
+
+    public void setRequestTimeMilis(long requestTimeMilis) {
+        this.requestTimeMilis = requestTimeMilis;
+    }
+
+    public long getRequestDuration() {
+        return receiveTimeMilis - requestTimeMilis;
     }
 }

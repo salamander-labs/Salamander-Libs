@@ -32,7 +32,6 @@ import java.util.List;
  */
 public class PermissionHelper {
 
-
     private static final int PERMISSION_REQUEST_CODE = 98;
     private Activity activity;
     private Fragment fragment;
@@ -261,12 +260,7 @@ public class PermissionHelper {
      * @param permissionsForRequest = permissions, when currently not granted and will be asked
      */
     private void showDialogBeforeRun(final String[] permissionsForRequest) {
-        dialogBeforeRunBuilder.setPositiveButton(dialogBeforeAskPositiveButton, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                askPermissions(permissionsForRequest);
-            }
-        });
+        dialogBeforeRunBuilder.setPositiveButton(dialogBeforeAskPositiveButton, (dialogInterface, i) -> askPermissions(permissionsForRequest));
         final AlertDialog dialogBeforeRun = dialogBeforeRunBuilder.create();
 
         dialogBeforeRun.show();

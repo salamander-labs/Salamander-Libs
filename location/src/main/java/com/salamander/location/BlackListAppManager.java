@@ -20,7 +20,8 @@ import retrofit2.http.GET;
 
 public class BlackListAppManager {
 
-    private static final String URL = "http://dtswebapi.datascrip.co.id/demo/rest_api/android_data/";
+    private static final String URL = "https://gist.githubusercontent.com/salamander-labs/1217b74564ef74b32b41216332b61881/raw";
+
     public static void getBlackListApp(final Context context, final OnCB CB) {
         IC_GetBlacklistApp IC = createRetrofit().create(IC_GetBlacklistApp.class);
         IC.getBlackListApp().enqueue(new RetroResp.SuccessCallback<ResponseBody>(context) {
@@ -49,7 +50,6 @@ public class BlackListAppManager {
                 .client(client.build())
                 .build();
     }
-
 
     public interface OnCB {
         void onCB(RetroStatus status);

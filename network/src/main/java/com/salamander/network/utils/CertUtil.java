@@ -2,7 +2,11 @@ package com.salamander.network.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
+
+import com.salamander.core.Utils;
+import com.salamander.network.DownloadCertificate;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -10,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 
 public class CertUtil {
 
@@ -25,13 +31,25 @@ public class CertUtil {
         }
     }
 
+    public static Certificate getCertificate(Context context) {
+        Certificate certificate = null;
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            try (InputStream inputStream = CertUtil.stringToStream(CertUtil.getCertificateText(context))) {
+                certificate = certificateFactory.generateCertificate(inputStream);
+            }
+        } catch (Exception e) {
+            Utils.showLog(e);
+        }
+        return certificate;
+    }
+
     public static String getCertificateText(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         return sharedPreferences.getString(CERT_TEXT, null);
     }
 
     public static InputStream stringToStream(String input) {
-
         //use ByteArrayInputStream to get the bytes of the String and convert them to InputStream.
         return new ByteArrayInputStream(input.getBytes(Charset.forName("UTF-8")));
     }
@@ -61,5 +79,13 @@ public class CertUtil {
             }
         }
         return sb.toString();
+    }
+
+    public static void downloadCertificate(Context context, PostDownload postDownload) {
+        new DownloadCertificate(context, postDownload);
+    }
+
+    public interface PostDownload {
+        void downloadDone(String errorMessage);
     }
 }

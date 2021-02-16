@@ -1,80 +1,79 @@
 package com.salamander.core.utils;
 
-import com.salamander.core.object.Tanggal;
+import androidx.annotation.Nullable;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import com.salamander.core.Utils;
+
+import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
 
 public class DateUtils {
 
-    public static String dateToString(String format, Tanggal tanggal) {
-        return new SimpleDateFormat(format, Locale.getDefault()).format(tanggal.getDate());
+    public static final String FORMAT_DATE = "yyyy-MM-dd";
+    public static final String FORMAT_DATETIME_FULL = "yyyy-MM-dd HH:mm:ss";
+    public static final String FORMAT_DATETIME_NO_SEC = "yyyy-MM-dd HH:mm";
+    public static final String FORMAT_UI = "EEEE, dd MMMM yyyy";
+    public static final String FORMAT_UI_NO_DAY = "dd MMMM yyyy";
+    public static final String FORMAT_UI_NO_DAY_SHORT_MONTH = "dd MMM yyyy";
+    public static final String FORMAT_TIME_FULL = "HH:mm:ss";
+    public static final String FORMAT_TIME_NO_SECOND = "HH:mm";
+
+    private static String toString(String format, long dateTimeMillis) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTimeMillis), ZoneId.systemDefault());
+        return localDateTime.format(DateTimeFormatter.ofPattern(format));
     }
 
-    public static String dateToString(String format, Tanggal tanggal, Locale locale) {
-        return new SimpleDateFormat(format, locale).format(tanggal.getDate());
+    public static String toString(long dateTimeMillis) {
+        return toString(FORMAT_DATETIME_FULL, dateTimeMillis);
     }
 
-    public static String dateToString(String format, Date date) {
-        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
+    public static String format(String format, long timeMillis) {
+        return toString(format, timeMillis);
     }
 
-    public static String dateToString(String format, Date date, Locale locale) {
-        return new SimpleDateFormat(format, locale).format(date);
-    }
-
-    public static Date stringToDate(String format, String dateStr) {
-        try {
-            if (dateStr == null)
-                return new Date(0);
-            else return new SimpleDateFormat(format, Locale.getDefault()).parse(dateStr);
-        } catch (Exception e) {
-            //FileUtil.writeExceptionLog(context, TermsOfPaymentSQLite.class.getSimpleName() + " => Insert => ", e);
-            return null;
+    public static long toLong(String format, @Nullable String dateTimeStr) {
+        if (Utils.isEmpty(dateTimeStr))
+            return 0;
+        else if (dateTimeStr.contains(":")) {
+            LocalDateTime localDateTime = LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern(format));
+            return localDateTime.toInstant(ZoneId.systemDefault().getRules().getOffset(localDateTime)).toEpochMilli();
+        } else {
+            try {
+                LocalDate localDate = LocalDate.parse(dateTimeStr, DateTimeFormatter.ofPattern(format));
+                LocalDateTime localDateTime = localDate.atStartOfDay();
+                return localDateTime.toInstant(ZoneId.systemDefault().getRules().getOffset(localDateTime)).toEpochMilli();
+            } catch (Exception e) {
+                return 0;
+            }
         }
     }
 
-    public static int calcDays(Date fromDate, Date toDate, int initialDays) {
-        Calendar cMulai = Calendar.getInstance(),
-                cSelesai = Calendar.getInstance();
-        cMulai.setTime(fromDate);
-        cSelesai.setTime(toDate);
-        cMulai.set(cMulai.get(Calendar.YEAR), cMulai.get(Calendar.MONTH), cMulai.get(Calendar.DAY_OF_MONTH));
-        cSelesai.set(cSelesai.get(Calendar.YEAR), cSelesai.get(Calendar.MONTH), cSelesai.get(Calendar.DAY_OF_MONTH));
-        long diff = cSelesai.getTime().getTime() - cMulai.getTime().getTime();
-        long diffDays = TimeUnit.MILLISECONDS.toDays(diff);
-        return (int) diffDays + initialDays;
+    public static LocalDate toLocalDate(long millis) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault()).toLocalDate();
     }
 
-    public static int calcWorkDays(Date fromDate, Date toDate) {
-
-        int workDays = 0;
-
-        fromDate = stringToDate(Tanggal.FORMAT_DATE, dateToString(Tanggal.FORMAT_DATE, fromDate));
-        toDate = stringToDate(Tanggal.FORMAT_DATE, dateToString(Tanggal.FORMAT_DATE, toDate));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fromDate);
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-
-        if (fromDate != null && toDate != null)
-            do {
-                workDays += 1;
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-                fromDate.setTime(calendar.getTimeInMillis());
-            } while (fromDate.getTime() <= toDate.getTime());
-        return workDays;
+    public static LocalDateTime toLocalDateTime(long millis) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
     }
 
+    public static long toLong(String dateTimeStr) {
+        return toLong(FORMAT_DATETIME_FULL, dateTimeStr);
+    }
 
-    public GregorianCalendar dateToGregorianCalendar(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+    public static long toLong(LocalDateTime localDateTime) {
+        return localDateTime.toInstant(ZoneId.systemDefault().getRules().getOffset(localDateTime)).toEpochMilli();
+    }
 
-        return new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+    public static long toLong(LocalDate localDate) {
+        LocalDateTime localDateTime = localDate.atStartOfDay();
+        return localDateTime.toInstant(ZoneId.systemDefault().getRules().getOffset(localDateTime)).toEpochMilli();
+    }
+
+    public static int interval(ChronoUnit chronoUnit, long fromDate, long toDate) {
+        return (int) chronoUnit.between(toLocalDate(toDate), toLocalDate(fromDate));
     }
 }

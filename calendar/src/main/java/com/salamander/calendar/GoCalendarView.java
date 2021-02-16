@@ -43,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * The roboto calendar view
@@ -136,26 +137,20 @@ public class GoCalendarView extends LinearLayout {
 
     private void initializeEventListeners() {
 
-        leftButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (goCalendarListener == null) {
-                    throw new IllegalStateException("You must assing a valid GoCalendarListener first!");
-                }
-                currentMonthIndex--;
-                goCalendarListener.onLeftButtonClick();
+        leftButton.setOnClickListener(v -> {
+            if (goCalendarListener == null) {
+                throw new IllegalStateException("You must assing a valid GoCalendarListener first!");
             }
+            currentMonthIndex--;
+            goCalendarListener.onLeftButtonClick();
         });
 
-        rightButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (goCalendarListener == null) {
-                    throw new IllegalStateException("You must assing a valid GoCalendarListener first!");
-                }
-                currentMonthIndex++;
-                goCalendarListener.onRightButtonClick();
+        rightButton.setOnClickListener(v -> {
+            if (goCalendarListener == null) {
+                throw new IllegalStateException("You must assing a valid GoCalendarListener first!");
             }
+            currentMonthIndex++;
+            goCalendarListener.onRightButtonClick();
         });
     }
 
@@ -165,9 +160,16 @@ public class GoCalendarView extends LinearLayout {
 
     private void initializeComponentBehavior() {
         // Initialize calendar for current month
-        Locale locale = context.getResources().getConfiguration().locale;
-        Calendar currentCalendar = Calendar.getInstance(locale);
+        Calendar currentCalendar = Calendar.getInstance(getLocale());
         initializeCalendar(currentCalendar);
+    }
+
+    private Locale getLocale() {
+        if (locale == null)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                locale = context.getResources().getConfiguration().getLocales().getFirstMatch(new String[]{"us", "en", "id"});
+            else locale = context.getResources().getConfiguration().locale;
+        return locale;
     }
 
     @SuppressLint("DefaultLocale")
@@ -181,7 +183,7 @@ public class GoCalendarView extends LinearLayout {
         monthTitle.setTextColor(color);
         yearTitle.setTextColor(color);
 
-        String dateText = new DateFormatSymbols(locale).getMonths()[currentCalendar.get(Calendar.MONTH)];
+        String dateText = new DateFormatSymbols(getLocale()).getMonths()[currentCalendar.get(Calendar.MONTH)];
         dateText = dateText.substring(0, 1).toUpperCase() + dateText.subSequence(1, dateText.length());
         monthTitle.setText(dateText);
         yearTitle.setText(String.valueOf(currentCalendar.get(Calendar.YEAR)));
@@ -197,7 +199,7 @@ public class GoCalendarView extends LinearLayout {
 
         TextView dayOfWeek;
         String dayOfTheWeekString;
-        String[] weekDaysArray = new DateFormatSymbols(locale).getShortWeekdays();
+        String[] weekDaysArray = new DateFormatSymbols(getLocale()).getShortWeekdays();
         for (int i = 1; i < weekDaysArray.length; i++) {
             dayOfWeek = (TextView) view.findViewWithTag("dayOfWeek" + getWeekIndex(i, currentCalendar));
             dayOfTheWeekString = weekDaysArray[i];
@@ -257,7 +259,7 @@ public class GoCalendarView extends LinearLayout {
     }
 
     private void setDaysInCalendar() {
-        Calendar auxCalendar = Calendar.getInstance(locale);
+        Calendar auxCalendar = Calendar.getInstance(getLocale());
         auxCalendar.setTime(currentCalendar.getTime());
         auxCalendar.set(Calendar.DAY_OF_MONTH, 1);
         int firstDayOfMonth = auxCalendar.get(Calendar.DAY_OF_WEEK);
@@ -384,12 +386,12 @@ public class GoCalendarView extends LinearLayout {
             // Fire event
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(currentCalendar.getTime());
-            calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dayOfMonthText.getText().toString()));
+            calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dayOfMonthText.getText().toString()));
 
             if (goCalendarListener == null) {
                 throw new IllegalStateException("You must assing a valid GoCalendarListener first!");
             } else {
-                goCalendarListener.onDateSelected(calendar.getTime());
+                goCalendarListener.onDateSelected(calendar.getTimeInMillis());
 
             }
         }
@@ -401,7 +403,7 @@ public class GoCalendarView extends LinearLayout {
 
     public interface GoCalendarListener {
 
-        public void onDateSelected(Date date);
+        public void onDateSelected(long date);
 
         public void onRightButtonClick();
 
@@ -432,8 +434,7 @@ public class GoCalendarView extends LinearLayout {
     }
 
     public void markDayAsCurrentDay() {
-        Locale locale = context.getResources().getConfiguration().locale;
-        Calendar currentCalendar = Calendar.getInstance(locale);
+        Calendar currentCalendar = Calendar.getInstance(getLocale());
         currentCalendar.setTime(currentCalendar.getTime());
         TextView dayOfMonth = getDayOfMonthText(currentCalendar);
         Typeface robotoTypeface = Fonts.obtaintTypefaceFromString(context, getResources().getString(R.string.currentDayOfMonthFont));
@@ -447,17 +448,19 @@ public class GoCalendarView extends LinearLayout {
         else
             dayOfMonth.setText(Html.fromHtml("<b>" + dayOfMonth.getText().toString() + "</b>", Html.FROM_HTML_MODE_LEGACY));
     }
-
     public void markDayAsSelectedDay(Date currentDate) {
+        markDayAsSelectedDay(currentDate.getTime());
+    }
+
+    public void markDayAsSelectedDay(long currentDateMillis) {
 
         // Clear previous marks
-        Calendar.getInstance().setTime(currentDate);
+        Calendar.getInstance().setTimeInMillis(currentDateMillis);
         if ((prevMonthIndex == currentMonthIndex) && (prevDaySelected != null))
             clearDayOfMonthContainerBackground();
 
-        Locale locale = context.getResources().getConfiguration().locale;
-        Calendar currentCalendar = Calendar.getInstance(locale);
-        currentCalendar.setTime(currentDate);
+        Calendar currentCalendar = Calendar.getInstance(getLocale());
+        currentCalendar.setTimeInMillis(currentDateMillis);
         ViewGroup dayOfMonthContainer = getDayOfMonthContainer(currentCalendar);
         //if (dayOfMonthContainer != today) {
         dayOfMonthContainer.setBackgroundResource(R.drawable.calendar_bg_day_selected);
@@ -466,10 +469,10 @@ public class GoCalendarView extends LinearLayout {
         prevDaySelected = dayOfMonthContainer;
     }
 
-    public void markDayWithStyle(int style, Date currentDate, int count) {
+    public void markDayWithStyle(int style, long currentDate, int count) {
         Locale locale = context.getResources().getConfiguration().locale;
         Calendar currentCalendar = Calendar.getInstance(locale);
-        currentCalendar.setTime(currentDate);
+        currentCalendar.setTimeInMillis(currentDate);
         //ImageView dayOfMonthImage = getDayOfMonthImage(currentCalendar);
         TextView dayOfMonthText = getDayOfMonthText(currentCalendar);
         TextView dayOfMonthCount = getDayOfMonthJmlOrder(currentCalendar);
@@ -488,10 +491,9 @@ public class GoCalendarView extends LinearLayout {
         //dayOfMonthText.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/treb_bold.ttf"));
     }
 
-    public void markHoliday(Date currentDate) {
-        Locale locale = context.getResources().getConfiguration().locale;
-        Calendar currentCalendar = Calendar.getInstance(locale);
-        currentCalendar.setTime(currentDate);
+    public void markHoliday(long currentDate) {
+        Calendar currentCalendar = Calendar.getInstance(getLocale());
+        currentCalendar.setTimeInMillis(currentDate);
         TextView dayOfMonthText = getDayOfMonthText(currentCalendar);
 
         dayOfMonthText.setTextColor(ContextCompat.getColor(context, R.color.holiday));
@@ -510,7 +512,8 @@ public class GoCalendarView extends LinearLayout {
                 String date = entry.getKey();
                 int count = entry.getValue();
                 Date d = format.parse(date);
-                markDayWithStyle(BLUE_CIRCLE, d, count);
+                assert d != null;
+                markDayWithStyle(BLUE_CIRCLE, d.getTime(), count);
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
@@ -539,8 +542,7 @@ public class GoCalendarView extends LinearLayout {
     }
 
     public void markUnreadWithStyle(Date currentDate) {
-        Locale locale = context.getResources().getConfiguration().locale;
-        Calendar currentCalendar = Calendar.getInstance(locale);
+        Calendar currentCalendar = Calendar.getInstance(getLocale());
         currentCalendar.setTime(currentDate);
         ImageView imgUnReadOrder = getImgUnReadOrder(currentCalendar);
 
@@ -556,8 +558,8 @@ public class GoCalendarView extends LinearLayout {
         }
         for (HashMap.Entry<String, Integer> entry : maps.entrySet()) {
             try {
-                markHoliday(format.parse(entry.getKey()));
-            } catch (ParseException e) {
+                markHoliday(Objects.requireNonNull(format.parse(entry.getKey())).getTime());
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
             }

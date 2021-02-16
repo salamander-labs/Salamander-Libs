@@ -1,8 +1,14 @@
-<manifest package="com.salamander.location"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.salamander.location">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application>
         <service android:name="com.salamander.location.LocationUpdateService" />
+        <service
+            android:name=".JobIntentServiceBlackListApp"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

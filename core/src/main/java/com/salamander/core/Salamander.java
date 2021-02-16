@@ -11,7 +11,6 @@ public class Salamander implements Serializable {
 
     //private constructor.
     private Salamander(){
-
         //Prevent form the reflection api.
         if (sSoleInstance != null){
             throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
@@ -24,7 +23,6 @@ public class Salamander implements Serializable {
                 if (sSoleInstance == null) sSoleInstance = new Salamander();
             }
         }
-
         return sSoleInstance;
     }
 
@@ -46,7 +44,7 @@ public class Salamander implements Serializable {
             String[] splitString = appContext.getPackageName().split("\\.");
             return splitString[splitString.length - 1];
         } else {
-            String[] splitString = BuildConfig.APPLICATION_ID.split("\\.");
+            String[] splitString = BuildConfig.LIBRARY_PACKAGE_NAME.split("\\.");
             return splitString[splitString.length - 1];
         }
     }

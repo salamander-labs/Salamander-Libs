@@ -1,22 +1,13 @@
-package com.salamander.core;
+package com.salamander.location;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class ToolbarActivity extends AppCompatActivity {
-
-    protected AppCompatActivity activity;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.activity = this;
-    }
+public class LocationToolbarActivity extends LocationActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -24,17 +15,17 @@ public class ToolbarActivity extends AppCompatActivity {
         this.activity = this;
     }
 
-    protected void initToolbar(int resourceId, String title) {
-        Toolbar toolbar = findViewById(resourceId);
+    protected void initToolbar(int layoutID, String title) {
+        Toolbar toolbar = findViewById(layoutID);
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    protected void initToolbar(int resourceId,int titleID) {
-        Toolbar toolbar = findViewById(resourceId);
-        toolbar.setTitle(getString(titleID));
+    protected void initToolbar(int layoutID, int title) {
+        Toolbar toolbar = findViewById(layoutID);
+        toolbar.setTitle(getString(title));
         setSupportActionBar(toolbar);
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -47,6 +38,6 @@ public class ToolbarActivity extends AppCompatActivity {
                 finish();
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 }
